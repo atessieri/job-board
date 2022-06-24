@@ -1,4 +1,4 @@
-## Installation
+## Installation and startup
 
 ```bash
 $npx create-next-app@latest week-10-job-board
