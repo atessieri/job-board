@@ -1,3 +1,40 @@
+## Installation
+
+```bash
+$npx create-next-app@latest week-10-job-board
+$npm install -D prisma tailwindcss postcss autoprefixer @faker-js/faker
+$npm install prisma-field-encryption next-auth pg @next-auth/prisma-adapter nodemailer sharp
+$npx tailwindcss init -p
+$npx prisma init
+```
+
+Generate key
+
+```bash
+$npx cloak generate
+```
+
+Create mail [Mail Trap](https://mailtrap.io) for testing
+Generate secret (32 bytes) with [Generate Secret](https://generate-secret.vercel.app/32)
+
+To set the database
+
+```bash
+$npx prisma migrate dev
+```
+
+To generate again the prisma client
+
+```bash
+$npx prisma generate
+```
+
+Check to update packages
+
+```bash
+npx npm-check-updates -u
+```
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
