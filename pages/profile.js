@@ -1,11 +1,11 @@
+import ProfileForm from 'components/ProfileForm';
+import PageLayout from 'components/PageLayout';
+import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/react';
 import prisma from 'lib/prisma';
-import { getUser, getJobs } from 'lib/data.js';
-import { useRouter } from 'next/router';
-import Jobs from 'components/Jobs';
-import PageLayout from 'components/PageLayout';
+import { getUser } from 'lib/data';
 
-export default function Dashboard({ jobs, user }) {
+export default function Profile({ user }) {
   const router = useRouter();
   if (!user) {
     router.push('/');
@@ -14,17 +14,12 @@ export default function Dashboard({ jobs, user }) {
   const userNav = {
     name: user.name,
     email: user.email,
-    image: user.image,
     role: user.role,
+    image: user.image,
   };
   return (
-    <PageLayout currentPage={'Dashboard'} user={userNav}>
-      <div className='mt-10'>
-        <div className='text-center p-4 m-4'>
-          <h2 className='mb-10 text-4xl font-bold'>Find a job!</h2>
-        </div>
-        <Jobs jobs={jobs} isDashboard={true} />
-      </div>
+    <PageLayout currentPage={'Profile'} user={userNav}>
+      <ProfileForm user={user} />
     </PageLayout>
   );
 }
@@ -37,8 +32,6 @@ export async function getServerSideProps(context) {
       props.user = await getUser(prisma, session.user.id);
       props.user = JSON.parse(JSON.stringify(props.user));
     }
-    props.jobs = await getJobs(prisma, true, undefined, 10);
-    props.jobs = JSON.parse(JSON.stringify(props.jobs));
   } catch (error) {
     console.log(error.message);
     props = {};

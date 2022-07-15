@@ -16,6 +16,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  COMPANY
+  WORKER
+}
+
 model User {
   id            String        @id @default(cuid())
   name          String?
@@ -27,9 +33,9 @@ model User {
   updatedAt     DateTime      @updatedAt
   accounts      Account[]
   sessions      Session[]
-  Job           Job[]
-  company       Boolean       @default(false)
-  Application   Application[]
+  job           Job[]
+  role          Role          @default(WORKER)
+  application   Application[]
 }
 
 model VerificationToken {
@@ -69,21 +75,24 @@ model Session {
 model Job {
   id          Int           @id @default(autoincrement())
   createdAt   DateTime      @default(now())
-  title       String?
-  description String?
-  salary      String?
-  location    String?
-  published   Boolean       @default(true)
-  author      User          @relation(fields: [authorId], references: [id])
+  title       String
+  description String
+  salary      Decimal       @db.Decimal(9,2)
+  location    String
+  published   Boolean      
+  author      User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId    String
-  Application Application[]
+  application Application[]
+  @@index([id])
 }
 
 model Application {
   id          Int    @id @default(autoincrement())
-  coverletter String
-  job         Job    @relation(fields: [jobId], references: [id])
+  coverLetter String
+  job         Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
   jobId       Int
-  author      User   @relation(fields: [authorId], references: [id])
+  author      User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId    String
+  @@index([id])
+  @@unique([authorId, jobId])
 }
