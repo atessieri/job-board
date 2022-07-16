@@ -1,33 +1,30 @@
 import NavBar from 'components/NavBar';
+import ProfileDialog from 'components/ProfileDialog';
+import { useState } from 'react';
 import { signIn, signOut } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
-const adminNav = [
-  { name: 'Utils', href: '/utils', current: true },
-  { name: 'Profile', href: '/profile', current: false },
-];
+const adminNav = [{ name: 'Utils', href: '/utils', current: true }];
 
 const companyNav = [
   { name: 'Jobs', href: '/', current: false },
   { name: 'Dashboard', href: '/dashboard', current: false },
   { name: 'New Job', href: '/newJob', current: false },
-  { name: 'Profile', href: '/profile', current: false },
 ];
 
 const workerNav = [
   { name: 'Jobs', href: '/', current: false },
   { name: 'Dashboard', href: '/dashboard', current: false },
-  { name: 'Profile', href: '/profile', current: false },
 ];
 
 const guestNav = [{ name: 'Jobs', href: '/', current: false }];
 
-const userNavigation = [{ name: 'Profile', href: '/' }];
-
 const logo = '/logo.png';
 
-export default function PageLayout({ currentPage, user, children }) {
+export default function PageLayout({ user, children }) {
+  const router = useRouter();
+  let [isOpen, setIsOpen] = useState(false);
   let navigation;
-
   if (!user) {
     navigation = guestNav;
   } else {
@@ -47,22 +44,20 @@ export default function PageLayout({ currentPage, user, children }) {
     }
   }
   navigation.map((item) => {
-    if (item.name === currentPage) {
+    if (item.href === router.pathname) {
       item.current = true;
     } else {
       item.current = false;
     }
   });
+  const userNavigation = [
+    { name: 'Profile', action: () => setIsOpen(true) },
+    { name: 'Logout', action: signOut },
+  ];
   return (
     <div className='max-w-7xl mx-auto'>
-      <NavBar
-        logo={logo}
-        navigation={navigation}
-        userNavigation={userNavigation}
-        user={user}
-        login={signIn}
-        logout={signOut}
-      />
+      <NavBar logo={logo} navigation={navigation} userNavigation={userNavigation} user={user} login={signIn} />
+      <ProfileDialog user={user} isOpen={isOpen} setIsOpen={setIsOpen} />
       {children}
     </div>
   );

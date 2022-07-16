@@ -47,26 +47,8 @@ function LoginButton({ login }) {
   );
 }
 
-function LogoutButton({ logout }) {
-  if (!logout) {
-    return null;
-  }
-  return (
-    <div className='block px-4 py-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100'>
-      <button
-        type='button'
-        onClick={() => {
-          logout();
-        }}
-      >
-        Logout
-      </button>
-    </div>
-  );
-}
-
-function UserMenuDropDown({ userNavigation, user, logout }) {
-  if (!user || !logout) {
+function UserMenuDropDown({ userNavigation, user }) {
+  if (!userNavigation || !user) {
     return null;
   }
   return (
@@ -90,13 +72,19 @@ function UserMenuDropDown({ userNavigation, user, logout }) {
               userNavigation.map((item) => (
                 <Menu.Item key={item.name}>
                   {() => (
-                    <div className='block px-4 py-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100'>
-                      <Link href={item.href}>{item.name}</Link>
-                    </div>
+                    <button
+                      key={item.name}
+                      className='block px-4 py-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100'
+                      onClick={(event) => {
+                        event.preventDefault();
+                        item.action();
+                      }}
+                    >
+                      {item.name}
+                    </button>
                   )}
                 </Menu.Item>
               ))}
-            <Menu.Item>{() => <LogoutButton logout={logout} />}</Menu.Item>
           </Menu.Items>
         </Transition>
       </Menu>
@@ -178,14 +166,17 @@ export default function NavBar({ logo, navigation, userNavigation, user, login, 
               <div className='mt-3 space-y-1'>
                 {userNavigation &&
                   userNavigation.map((item) => (
-                    <div
+                    <button
                       key={item.name}
                       className='block px-4 py-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100'
+                      onClick={(event) => {
+                        event.preventDefault();
+                        item.action();
+                      }}
                     >
-                      <Link href={item.href}>{item.name}</Link>
-                    </div>
+                      {item.name}
+                    </button>
                   ))}
-                <LogoutButton logout={logout} />
               </div>
             </div>
           </Disclosure.Panel>

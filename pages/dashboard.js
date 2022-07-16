@@ -11,14 +11,8 @@ export default function Dashboard({ jobs, user }) {
     router.push('/');
     return null;
   }
-  const userNav = {
-    name: user.name,
-    email: user.email,
-    image: user.image,
-    role: user.role,
-  };
   return (
-    <PageLayout currentPage={'Dashboard'} user={userNav}>
+    <PageLayout user={user}>
       <div className='mt-10'>
         <div className='text-center p-4 m-4'>
           <h2 className='mb-10 text-4xl font-bold'>Find a job!</h2>

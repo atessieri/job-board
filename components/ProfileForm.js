@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 import Image from 'next/image';
 import GrayMan from 'components/GrayMan';
 import { faker } from '@faker-js/faker';
@@ -99,12 +98,11 @@ async function profileSave(username, name, role, image) {
   }
 }
 
-export default function ProfileForm({ user }) {
+export default function ProfileForm({ user, save, cancel }) {
   const [username, setUsername] = useState(user.username);
   const [name, setName] = useState(user.name);
   const [role, setRole] = useState(user.role);
   const [image, setImage] = useState(user.image);
-  const router = useRouter();
   return (
     <div className='mt-10'>
       <div className='text-center p-4 m-4'>
@@ -146,7 +144,9 @@ export default function ProfileForm({ user }) {
                   className='bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
                   onClick={(event) => {
                     event.preventDefault();
-                    router.push('/');
+                    if (cancel) {
+                      cancel();
+                    }
                   }}
                 >
                   Cancel
@@ -157,7 +157,9 @@ export default function ProfileForm({ user }) {
                   onClick={async (event) => {
                     event.preventDefault();
                     await profileSave(username, name, role, image);
-                    router.push('/profile');
+                    if (save) {
+                      save();
+                    }
                   }}
                 >
                   Save
