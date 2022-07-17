@@ -28,11 +28,20 @@ export async function getServerSideProps(context) {
   try {
     const session = await getSession(context);
     if (session) {
-      props.user = await getUser(prisma, session.user.id);
-      props.user = JSON.parse(JSON.stringify(props.user));
+      let user;
+      user = await getUser(prisma, session.user.id);
+      user = JSON.parse(JSON.stringify(user));
+      props.user = {
+        id: session.user.id,
+        name: user.name,
+        email: user.email,
+        username: user.username,
+        image: user.image,
+        role: user.role,
+      };
+      props.jobs = await getJobs(prisma, false, session.user.id, 10);
+      props.jobs = JSON.parse(JSON.stringify(props.jobs));
     }
-    props.jobs = await getJobs(prisma, true, undefined, 10);
-    props.jobs = JSON.parse(JSON.stringify(props.jobs));
   } catch (error) {
     console.log(error.message);
     props = {};

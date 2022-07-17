@@ -10,11 +10,6 @@ export default function ProfileDialog({ user, isOpen, setIsOpen }) {
     await router.push(router.pathname);
     setIsOpen(false);
   };
-
-  console.log(`username: ${user.username}`);
-  console.log(`name: ${user.name}`);
-  console.log(`role: ${user.role}`);
-  console.log(`image: ${user.image}`);
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as='div' className='relative z-10' onClose={closeDialog}>
