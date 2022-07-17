@@ -164,7 +164,9 @@ export default function NavBar({ logo, navigation, userNavigation, user, login, 
                 <ImageName className='text-sm' user={user} />
               </div>
               <div className='mt-3 space-y-1'>
-                {userNavigation &&
+                {!user && <LoginButton login={login} />}
+                {user &&
+                  userNavigation &&
                   userNavigation.map((item) => (
                     <button
                       key={item.name}
