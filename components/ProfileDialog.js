@@ -1,17 +1,27 @@
 import ProfileForm from './ProfileForm';
-import { Fragment } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
 
-export default function ProfileDialog({ user, isOpen, setIsOpen }) {
+export default function ProfileDialog({ user, isOpen, onExit }) {
+  let [show, setShow] = useState(false);
   const router = useRouter();
-  const closeDialog = () => setIsOpen(false);
-  const saveDialog = async () => {
-    await router.push(router.pathname);
-    setIsOpen(false);
+  const closeDialog = () => {
+    setShow(false);
+    if (onExit) {
+      onExit();
+    }
   };
+  const saveDialog = async () => {
+    setShow(false);
+    if (onExit) {
+      onExit();
+    }
+    await router.push(router.pathname);
+  };
+  useEffect(() => setShow(isOpen), [isOpen]);
   return (
-    <Transition.Root show={isOpen} as={Fragment}>
+    <Transition.Root show={show} as={Fragment}>
       <Dialog as='div' className='relative z-10' onClose={closeDialog}>
         <Transition.Child
           as={Fragment}
@@ -24,7 +34,6 @@ export default function ProfileDialog({ user, isOpen, setIsOpen }) {
         >
           <div className='fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity' />
         </Transition.Child>
-
         <div className='fixed z-10 inset-0 overflow-y-auto'>
           <div className='flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0'>
             <Transition.Child
@@ -39,7 +48,7 @@ export default function ProfileDialog({ user, isOpen, setIsOpen }) {
               <Dialog.Panel className='relative bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full sm:p-6'>
                 <div className='mt-3 text-center sm:mt-5'>
                   <div className='mt-2'>
-                    <ProfileForm user={user} save={saveDialog} cancel={closeDialog} />
+                    <ProfileForm user={user} onSave={saveDialog} onCancel={closeDialog} />
                   </div>
                 </div>
               </Dialog.Panel>

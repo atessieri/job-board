@@ -1,13 +1,21 @@
-import { useState } from 'react';
 import Image from 'next/image';
 import GrayMan from 'components/GrayMan';
+import Notification from './Notification';
+import { useState } from 'react';
 import { faker } from '@faker-js/faker';
 import { Role } from '@prisma/client';
 
-function LabelEdit({ label, type, text, setText, pattern = '.*' }) {
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
+
+function LabelEdit({ labelClassName, editClassName, label, type, text, setText, pattern = '.*' }) {
   return (
     <div className='sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5'>
-      <label htmlFor='text' className='block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2'>
+      <label
+        htmlFor='text'
+        className={classNames(labelClassName, 'block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2')}
+      >
         {label}
       </label>
       <div className='mt-1 sm:mt-0 sm:col-span-2'>
@@ -18,7 +26,10 @@ function LabelEdit({ label, type, text, setText, pattern = '.*' }) {
             id='text'
             autoComplete={label}
             pattern={pattern}
-            className='flex-1 block w-full focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300'
+            className={classNames(
+              editClassName,
+              'flex-1 block w-full focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300',
+            )}
             value={text}
             required
             onChange={(event) => {
@@ -31,10 +42,10 @@ function LabelEdit({ label, type, text, setText, pattern = '.*' }) {
   );
 }
 
-function LabelImage({ label, image, setImage }) {
+function LabelImage({ labelClassName, label, image, setImage }) {
   return (
     <div className='sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center sm:border-t sm:border-gray-200 sm:pt-5'>
-      <label htmlFor='photo' className='block text-sm font-medium text-gray-700'>
+      <label htmlFor='photo' className={classNames(labelClassName, 'block text-sm font-medium text-gray-700')}>
         {label}
       </label>
       <div className='mt-1 sm:mt-0 sm:col-span-2'>
@@ -79,8 +90,9 @@ function LabelImage({ label, image, setImage }) {
 }
 
 async function profileSave(username, name, role, image) {
+  let response = {};
   try {
-    await fetch('/api/v1.0/userProfile', {
+    const fetchResponse = await fetch('/api/v1.0/userProfile', {
       body: JSON.stringify({
         username,
         name,
@@ -92,19 +104,34 @@ async function profileSave(username, name, role, image) {
       },
       method: 'PUT',
     });
+    response.success = fetchResponse.ok;
+    if (response.success) {
+      response.message = 'Successfully saved!';
+    } else {
+      const body = await fetchResponse.json();
+      response.message = body.message;
+    }
   } catch (error) {
     console.log(error.message);
-    alert('Error during saving');
+    response.success = false;
+    response.message = 'Internal error!';
   }
+  return response;
 }
 
-export default function ProfileForm({ user, save, cancel }) {
+export default function ProfileForm({ user, onSave, onCancel }) {
   const [username, setUsername] = useState(user.username);
   const [name, setName] = useState(user.name);
   const [role, setRole] = useState(user.role);
   const [image, setImage] = useState(user.image);
+  const [notificationState, setNotificationState] = useState({
+    isOpen: false,
+    success: true,
+    message: '',
+  });
   return (
     <div className='mt-10'>
+      <Notification state={notificationState} onClose={onSave} />
       <div className='text-center p-4 m-4'>
         <h2 className='mb-10 text-4xl font-bold'>Profile</h2>
       </div>
@@ -112,7 +139,7 @@ export default function ProfileForm({ user, save, cancel }) {
         <div className='space-y-8 divide-y divide-gray-200 sm:space-y-5'>
           <div className='mt-6 sm:mt-5 space-y-6 sm:space-y-5'>
             <LabelEdit label='Username' type='text' text={username} setText={setUsername} pattern='[a-zA-Z0-9.]{1,}' />
-            <LabelEdit label='E-mail' type='email' text={user.email} />
+            <LabelEdit editClassName='bg-gray-200' label='E-mail' type='email' text={user.email} />
             <LabelEdit label='Name' type='text' text={name} setText={setName} pattern='[a-zA-Z0-9\s]{1,}' />
             <LabelImage label='Photo' image={image} setImage={setImage} />
             <div className='sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5'>
@@ -144,8 +171,8 @@ export default function ProfileForm({ user, save, cancel }) {
                   className='bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
                   onClick={(event) => {
                     event.preventDefault();
-                    if (cancel) {
-                      cancel();
+                    if (onCancel) {
+                      onCancel();
                     }
                   }}
                 >
@@ -156,10 +183,12 @@ export default function ProfileForm({ user, save, cancel }) {
                   className='ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
                   onClick={async (event) => {
                     event.preventDefault();
-                    await profileSave(username, name, role, image);
-                    if (save) {
-                      save();
-                    }
+                    const response = await profileSave(username, name, role, image);
+                    setNotificationState({
+                      isOpen: true,
+                      success: response.success,
+                      message: response.message,
+                    });
                   }}
                 >
                   Save
