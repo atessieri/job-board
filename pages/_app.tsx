@@ -1,7 +1,12 @@
-import '../styles/globals.css';
+import 'styles/globals.css';
+import type { AppProps } from 'next/app';
 import { SessionProvider, useSession } from 'next-auth/react';
 
-function Auth({ children }) {
+interface AuthProps {
+  children: JSX.Element;
+}
+
+function Auth({ children }: AuthProps) {
   const { status } = useSession();
   if (status === 'loading') {
     return <div>Loading...</div>;
@@ -9,7 +14,7 @@ function Auth({ children }) {
   return children;
 }
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider session={pageProps.session}>
       <Auth>

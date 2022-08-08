@@ -1,7 +1,7 @@
 ## Installation
 
 ```bash
-$npx create-next-app@latest week-10-job-board
+$npx create-next-app@latest --typescript week-10-job-board
 $npm install -D prisma tailwindcss postcss autoprefixer @faker-js/faker
 $npm install prisma-field-encryption next-auth pg @next-auth/prisma-adapter nodemailer sharp @headlessui/react @heroicons/react @tailwindcss/forms
 $npx tailwindcss init -p

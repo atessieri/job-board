@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { fieldEncryptionMiddleware } from 'prisma-field-encryption';
 
 function prismaClientFactory(tracerEnabler = false) {
   const prisma = new PrismaClient({
@@ -30,17 +29,16 @@ function prismaClientFactory(tracerEnabler = false) {
       console.log('Duration: ' + e.duration + 'ms');
     });
   }
-  prisma.$use(fieldEncryptionMiddleware());
   return prisma;
 }
 
-let prisma;
+let prisma: PrismaClient;
 
 if (process.env.NODE_ENV === 'production') {
   prisma = prismaClientFactory(false);
 } else {
   if (!global.prisma) {
-    global.prisma = prismaClientFactory(true);
+    global.prisma = prismaClientFactory(false);
   }
   prisma = global.prisma;
 }

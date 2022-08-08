@@ -1,9 +1,11 @@
-import NextAuth from 'next-auth';
 import EmailProvider from 'next-auth/providers/email';
+import NextAuth from 'next-auth';
+import prisma from 'lib/database/prisma';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import prisma from 'lib/prisma';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextAuthOptions } from 'next-auth';
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     EmailProvider({
@@ -19,20 +21,23 @@ export default NextAuth({
     }),
   ],
 
-  database: process.env.DATABASE_URL,
   secret: process.env.SECRET,
 
   session: {
-    jwt: true,
+    strategy: 'database',
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
 
   debug: false,
 
   callbacks: {
-    session: async ({ session, user }) => {
+    session: async ({ session, token, user }) => {
       session.user.id = user.id;
       return Promise.resolve(session);
     },
   },
-});
+};
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  return await NextAuth(req, res, authOptions);
+}

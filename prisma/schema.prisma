@@ -6,11 +6,6 @@ generator client {
   previewFeatures = ["interactiveTransactions"]
 }
 
-generator fieldEncryptionMigrations {
-  provider = "prisma-field-encryption"
-  output = "./encryption/mnigrations"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -25,10 +20,10 @@ enum Role {
 model User {
   id            String        @id @default(cuid())
   name          String?
-  email         String?       @unique
+  email         String        @unique
   username      String?       @unique
   emailVerified DateTime?
-  image         String?
+  imagePath     String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   accounts      Account[]

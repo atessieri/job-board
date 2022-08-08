@@ -4,6 +4,7 @@ import Notification from './Notification';
 import { useState } from 'react';
 import { faker } from '@faker-js/faker';
 import { Role } from '@prisma/client';
+import { patternNameSurname, patternEmail, patternUsername, patternUrl } from 'lib/regexPattern';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -138,10 +139,16 @@ export default function ProfileForm({ user, onSave, onCancel }) {
       <form className='m-8 space-y-8 divide-y divide-gray-200'>
         <div className='space-y-8 divide-y divide-gray-200 sm:space-y-5'>
           <div className='mt-6 sm:mt-5 space-y-6 sm:space-y-5'>
-            <LabelEdit label='Username' type='text' text={username} setText={setUsername} pattern='[a-zA-Z0-9.]{1,}' />
-            <LabelEdit editClassName='bg-gray-200' label='E-mail' type='email' text={user.email} />
-            <LabelEdit label='Name' type='text' text={name} setText={setName} pattern='[a-zA-Z0-9\s]{1,}' />
-            <LabelImage label='Photo' image={image} setImage={setImage} />
+            <LabelEdit label='Username' type='text' text={username} setText={setUsername} pattern={patternUsername} />
+            <LabelEdit
+              editClassName='bg-gray-200'
+              label='E-mail'
+              type='email'
+              text={user.email}
+              pattern={patternEmail}
+            />
+            <LabelEdit label='Name' type='text' text={name} setText={setName} pattern={patternNameSurname} />
+            <LabelImage label='Photo' image={image} setImage={setImage} pattern={patternUrl} />
             <div className='sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5'>
               <label htmlFor='country' className='block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2'>
                 Country
