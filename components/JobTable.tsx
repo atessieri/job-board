@@ -1,13 +1,18 @@
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
-}
+import type { JobWithAuthor } from 'lib/database/JobManage';
+import type { User } from 'lib/database/UserManage';
+
+type JobTableProps = {
+  user?: User;
+  jobs?: JobWithAuthor[];
+  displayPublished: boolean;
+};
 
 function dataTimeConvert(dataTime: string) {
   const date = new Date(Date.parse(dataTime));
-  return date.toLocaleDateString('it-IT');
+  return date.toLocaleString('it-IT');
 }
 
-export default function JobTable({ user, jobs, displayPublished }) {
+export default function JobTable({ user, jobs, displayPublished }: JobTableProps) {
   return (
     <div className='hidden sm:block sm:px-6 lg:px-8'>
       <div className='mx-8 mt-8 overflow-hidden shadow-lg ring-2 ring-black ring-opacity-5 rounded-lg'>
@@ -49,33 +54,34 @@ export default function JobTable({ user, jobs, displayPublished }) {
             </tr>
           </thead>
           <tbody className='divide-y divide-gray-200 bg-white'>
-            {jobs.map((job) => (
-              <tr key={job.id}>
-                <td className='py-4 pl-4 pr-3 text-left text-sm font-medium text-gray-900'>{job.title}</td>
-                <td className='hidden whitespace-nowrap px-3 py-4 text-left text-sm text-gray-700 lg:table-cell'>
-                  {dataTimeConvert(job.createdAt)}
-                </td>
-                <td className='hidden whitespace-nowrap px-3 py-4 text-left text-sm text-gray-700 sm:table-cell'>
-                  {job.author.name ? job.author.name : job.author.email}
-                </td>
-                <td className='hidden whitespace-nowrap px-3 py-4 text-left text-sm text-gray-700 lg:table-cell'>
-                  {job.location}
-                </td>
-                <td className='hidden whitespace-nowrap px-3 py-4 text-right text-sm text-gray-700 md:table-cell'>
-                  {job.salary + '\u20AC'}
-                </td>
-                {displayPublished && (
-                  <td className='hidden whitespace-nowrap px-3 py-4 text-center text-sm text-gray-700 sm:table-cell'>
-                    {job.published ? 'true' : 'false'}
+            {jobs &&
+              jobs.map((job) => (
+                <tr key={job.job.id}>
+                  <td className='py-4 pl-4 pr-3 text-left text-sm font-medium text-gray-900'>{job.job.title}</td>
+                  <td className='hidden whitespace-nowrap px-3 py-4 text-left text-sm text-gray-700 lg:table-cell'>
+                    {dataTimeConvert(job.job.createdAt)}
                   </td>
-                )}
-                <td className='hidden whitespace-nowrap px-3 py-4 text-right text-sm text-gray-700 sm:table-cell'>
-                  {job._count.application}
-                </td>
-                <td className='py-4 pl-3 pr-4 text-right text-sm font-medium'>Edit</td>
-                <td className='py-4 pl-3 pr-4 text-right text-sm font-medium'>Delete</td>
-              </tr>
-            ))}
+                  <td className='hidden whitespace-nowrap px-3 py-4 text-left text-sm text-gray-700 sm:table-cell'>
+                    {job.author.name ? job.author.name : job.author.email}
+                  </td>
+                  <td className='hidden whitespace-nowrap px-3 py-4 text-left text-sm text-gray-700 lg:table-cell'>
+                    {job.job.location}
+                  </td>
+                  <td className='hidden whitespace-nowrap px-3 py-4 text-right text-sm text-gray-700 md:table-cell'>
+                    {job.job.salary + '\u20AC'}
+                  </td>
+                  {displayPublished && (
+                    <td className='hidden whitespace-nowrap px-3 py-4 text-center text-sm text-gray-700 sm:table-cell'>
+                      {job.job.published ? 'true' : 'false'}
+                    </td>
+                  )}
+                  <td className='hidden whitespace-nowrap px-3 py-4 text-right text-sm text-gray-700 sm:table-cell'>
+                    {job.applicationCount}
+                  </td>
+                  <td className='py-4 pl-3 pr-4 text-right text-sm font-medium'>Edit</td>
+                  <td className='py-4 pl-3 pr-4 text-right text-sm font-medium'>Delete</td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

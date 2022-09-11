@@ -2,9 +2,9 @@ import 'styles/globals.css';
 import type { AppProps } from 'next/app';
 import { SessionProvider, useSession } from 'next-auth/react';
 
-interface AuthProps {
+type AuthProps = {
   children: JSX.Element;
-}
+};
 
 function Auth({ children }: AuthProps) {
   const { status } = useSession();

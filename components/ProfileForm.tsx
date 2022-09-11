@@ -5,12 +5,27 @@ import { useState } from 'react';
 import { faker } from '@faker-js/faker';
 import { Role } from '@prisma/client';
 import { patternNameSurname, patternEmail, patternUsername, patternUrl } from 'lib/regexPattern';
+import { classNames } from 'lib/utilities';
+import type { User } from 'lib/database/UserManage';
+import type { Dispatch, SetStateAction } from 'react';
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+type LabelEditProps = {
+  labelClassName?: string;
+  editClassName?: string;
+  label: string;
+  text: string;
+  setText: Dispatch<SetStateAction<string | null | undefined>>;
+  pattern: RegExp;
+};
 
-function LabelEdit({ labelClassName, editClassName, label, type, text, setText, pattern = '.*' }) {
+function LabelEdit({
+  labelClassName,
+  editClassName,
+  label,
+  text,
+  setText,
+  pattern = new RegExp('.*'),
+}: LabelEditProps) {
   return (
     <div className='sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5'>
       <label
@@ -22,7 +37,7 @@ function LabelEdit({ labelClassName, editClassName, label, type, text, setText, 
       <div className='mt-1 sm:mt-0 sm:col-span-2'>
         <div className='max-w-lg flex rounded-md shadow-sm'>
           <input
-            type={type}
+            type='text'
             name='text'
             id='text'
             autoComplete={label}
@@ -93,7 +108,7 @@ function LabelImage({ labelClassName, label, image, setImage }) {
 async function profileSave(username, name, role, image) {
   let response = {};
   try {
-    const fetchResponse = await fetch('/api/v1.0/userProfile', {
+    const fetchResponse = await fetch('/api/v1.0/user', {
       body: JSON.stringify({
         username,
         name,
@@ -120,11 +135,17 @@ async function profileSave(username, name, role, image) {
   return response;
 }
 
-export default function ProfileForm({ user, onSave, onCancel }) {
+export type ProfileFormProps = {
+  user: User;
+  onSave: () => void;
+  onCancel: () => void;
+};
+
+export default function ProfileForm({ user, onSave, onCancel }: ProfileFormProps) {
   const [username, setUsername] = useState(user.username);
   const [name, setName] = useState(user.name);
   const [role, setRole] = useState(user.role);
-  const [image, setImage] = useState(user.image);
+  const [image, setImage] = useState(user.imagePath);
   const [notificationState, setNotificationState] = useState({
     isOpen: false,
     success: true,

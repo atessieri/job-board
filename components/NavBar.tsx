@@ -1,24 +1,50 @@
-/* This example requires Tailwind CSS v2.0+ */
-import { Fragment } from 'react';
-import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { MenuIcon, XIcon } from '@heroicons/react/outline';
 import GrayMan from 'components/GrayMan';
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
+import { classNames } from 'lib/utilities';
+import { Disclosure, Menu, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
+import { MenuIcon, XIcon } from '@heroicons/react/outline';
+import { signIn } from 'next-auth/react';
+import type { User } from 'lib/database/UserManage';
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+export type NavigationConfig = {
+  name: string;
+  href: string;
+  current: boolean;
+};
 
-function ImageName({ className, user }) {
+export type UserNavigationConfig = {
+  name: string;
+  action: () => void;
+};
+
+type ImageNameProps = {
+  className?: string;
+  user?: User;
+};
+
+type UserMenuDropDownProps = {
+  userNavigation: UserNavigationConfig[];
+  user?: User;
+};
+
+type NavBarProps = {
+  logo: string;
+  navigation: NavigationConfig[];
+  userNavigation: UserNavigationConfig[];
+  user?: User;
+};
+
+function ImageName({ className, user }: ImageNameProps) {
   if (!user) {
     return null;
   }
   return (
     <div className='flex items-center space-x-3'>
       <div className='flex rounded-full'>
-        {user.image ? (
-          <Image src={user.image} alt='' width='50' height='50' className='rounded-full' />
+        {typeof user.imagePath !== 'undefined' && user.imagePath !== null ? (
+          <Image src={user.imagePath} alt='' width='50' height='50' className='rounded-full' />
         ) : (
           <GrayMan className='h-10 w-10' />
         )}
@@ -28,17 +54,14 @@ function ImageName({ className, user }) {
   );
 }
 
-function LoginButton({ login }) {
-  if (!login) {
-    return null;
-  }
+function LoginButton() {
   return (
     <div className='flex-shrink-0'>
       <button
         type='button'
         className='relative inline-flex items-center px-4 py-2 border border-transparent rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
-        onClick={() => {
-          login();
+        onClick={async () => {
+          await signIn();
         }}
       >
         Login
@@ -47,7 +70,7 @@ function LoginButton({ login }) {
   );
 }
 
-function UserMenuDropDown({ userNavigation, user }) {
+function UserMenuDropDown({ userNavigation, user }: UserMenuDropDownProps) {
   if (!userNavigation || !user) {
     return null;
   }
@@ -92,7 +115,7 @@ function UserMenuDropDown({ userNavigation, user }) {
   );
 }
 
-export default function NavBar({ logo, navigation, userNavigation, user, login, logout }) {
+export default function NavBar({ logo, navigation, userNavigation, user }: NavBarProps) {
   return (
     <Disclosure as='nav' className='bg-white shadow text-base font-bold'>
       {({ open }) => (
@@ -123,11 +146,7 @@ export default function NavBar({ logo, navigation, userNavigation, user, login, 
                 </div>
               </div>
               <div className='hidden sm:flex sm:items-center'>
-                {user ? (
-                  <UserMenuDropDown userNavigation={userNavigation} user={user} logout={logout} />
-                ) : (
-                  <LoginButton login={login} />
-                )}
+                {user ? <UserMenuDropDown userNavigation={userNavigation} user={user} /> : <LoginButton />}
               </div>
               <div className='-mr-2 flex items-center sm:hidden'>
                 {/* Mobile menu button */}
@@ -164,7 +183,7 @@ export default function NavBar({ logo, navigation, userNavigation, user, login, 
                 <ImageName className='text-sm' user={user} />
               </div>
               <div className='mt-3 space-y-1'>
-                {!user && <LoginButton login={login} />}
+                {!user && <LoginButton />}
                 {user &&
                   userNavigation &&
                   userNavigation.map((item) => (

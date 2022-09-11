@@ -1,26 +1,36 @@
 import NavBar from 'components/NavBar';
 import ProfileDialog from 'components/ProfileDialog';
-import { useState, useEffect } from 'react';
-import { signIn, signOut } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
+import type { NavigationConfig, UserNavigationConfig } from 'components/NavBar';
+import type { User } from 'lib/database/UserManage';
 
-const adminNav = [{ name: 'Utils', href: '/utils', current: true }];
+type PageLayoutProps = {
+  user?: User;
+  children?: JSX.Element;
+};
 
-const companyNav = [
-  { name: 'Jobs', href: '/', current: false },
+const adminNav: NavigationConfig[] = [
+  { name: 'Home', href: '/', current: true },
+  { name: 'User manage', href: '/usermanage', current: false },
+];
+
+const companyNav: NavigationConfig[] = [
+  { name: 'Home', href: '/', current: false },
   { name: 'Dashboard', href: '/dashboard', current: false },
 ];
 
-const workerNav = [
-  { name: 'Jobs', href: '/', current: false },
+const workerNav: NavigationConfig[] = [
+  { name: 'Home', href: '/', current: false },
   { name: 'Dashboard', href: '/dashboard', current: false },
 ];
 
-const guestNav = [{ name: 'Jobs', href: '/', current: false }];
+const guestNav: NavigationConfig[] = [{ name: 'Jobs', href: '/', current: false }];
 
-const logo = '/logo.png';
+const logo: string = '/logo.png';
 
-export default function PageLayout({ user, children }) {
+export default function PageLayout({ user, children }: PageLayoutProps) {
   const router = useRouter();
   let [isOpen, setIsOpen] = useState(false);
   let navigation;
@@ -49,13 +59,13 @@ export default function PageLayout({ user, children }) {
       item.current = false;
     }
   });
-  const userNavigation = [
+  const userNavigation: UserNavigationConfig[] = [
     { name: 'Profile', action: () => setIsOpen(true) },
-    { name: 'Logout', action: signOut },
+    { name: 'Logout', action: async () => await signOut() },
   ];
   return (
     <div className='max-w-7xl mx-auto'>
-      <NavBar logo={logo} navigation={navigation} userNavigation={userNavigation} user={user} login={signIn} />
+      <NavBar logo={logo} navigation={navigation} userNavigation={userNavigation} user={user} />
       <ProfileDialog user={user} isOpen={isOpen} onExit={() => setIsOpen(false)} />
       {children}
     </div>

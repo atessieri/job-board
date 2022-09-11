@@ -1,9 +1,16 @@
 import ProfileForm from './ProfileForm';
-import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import { Fragment, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import type { User } from 'lib/database/UserManage';
 
-export default function ProfileDialog({ user, isOpen, onExit }) {
+type ProfileDialogProps = {
+  user?: User;
+  isOpen: boolean;
+  onExit: () => void;
+};
+
+export default function ProfileDialog({ user, isOpen, onExit }: ProfileDialogProps) {
   let [show, setShow] = useState(false);
   const router = useRouter();
   const closeDialog = () => {

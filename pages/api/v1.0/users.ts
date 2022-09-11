@@ -1,9 +1,9 @@
-import apiHandler from 'lib/apiHandler';
+import apiHandler from 'lib/genericHandler';
 import prisma from 'lib/database/prisma';
 import UserManage from 'lib/database/UserManage';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { ApiHandlerCallback } from 'lib/apiHandler';
+import type { ApiHandlerCallback } from 'lib/genericHandler';
 import type { Session } from 'next-auth';
 
 const callbackHandler: ApiHandlerCallback = async (
@@ -16,11 +16,12 @@ const callbackHandler: ApiHandlerCallback = async (
   }
   switch (req.method) {
     case 'GET': {
-      const user = await UserManage.getUser(session.user.id);
-      if (user === null || user.role !== 'ADMIN') {
+      const user = await UserManage.getUser(prisma, session.user.id);
+      if (typeof user === 'undefined' || user.role !== 'ADMIN') {
         return res.status(405).json({ message: 'Metod not allowed' });
       }
       const users = await UserManage.getUsers(
+        prisma,
         typeof req.query.take === 'string' ? parseInt(req.query.take) : undefined,
         typeof req.query.cursor === 'string' ? req.query.cursor : undefined,
       );
