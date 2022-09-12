@@ -8,6 +8,13 @@ $npx tailwindcss init -p
 $npx prisma init
 ```
 
+Update:
+
+```bash
+$npx npm-check-updates
+$npx npm-check-updates -u
+```
+
 Generate key
 
 ```bash
