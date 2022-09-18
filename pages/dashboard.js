@@ -1,5 +1,5 @@
 import { getSession } from 'next-auth/react';
-import prisma from 'lib/prisma';
+import prisma from 'lib/database/prisma';
 import { getUser, getJobs } from 'lib/data.js';
 import { useRouter } from 'next/router';
 import Jobs from 'components/Jobs';

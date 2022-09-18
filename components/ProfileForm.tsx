@@ -4,7 +4,12 @@ import Notification from './Notification';
 import { useState } from 'react';
 import { faker } from '@faker-js/faker';
 import { Role } from '@prisma/client';
-import { patternNameSurname, patternEmail, patternUsername, patternUrl } from 'lib/regexPattern';
+import {
+  patternNameSurnameString,
+  patternEmailString,
+  patternUsernameString,
+  patternUrlString,
+} from 'lib/regexPattern';
 import { classNames } from 'lib/utilities';
 import type { User } from 'lib/database/UserManage';
 import type { Dispatch, SetStateAction } from 'react';
@@ -15,7 +20,7 @@ type LabelEditProps = {
   label: string;
   text: string;
   setText: Dispatch<SetStateAction<string | null | undefined>>;
-  pattern: RegExp;
+  pattern: string;
 };
 
 function LabelEdit({
@@ -24,13 +29,16 @@ function LabelEdit({
   label,
   text,
   setText,
-  pattern = new RegExp('.*'),
+  pattern,
 }: LabelEditProps) {
   return (
     <div className='sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5'>
       <label
         htmlFor='text'
-        className={classNames(labelClassName, 'block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2')}
+        className={classNames(
+          labelClassName,
+          'block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2',
+        )}
       >
         {label}
       </label>
@@ -61,7 +69,10 @@ function LabelEdit({
 function LabelImage({ labelClassName, label, image, setImage }) {
   return (
     <div className='sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center sm:border-t sm:border-gray-200 sm:pt-5'>
-      <label htmlFor='photo' className={classNames(labelClassName, 'block text-sm font-medium text-gray-700')}>
+      <label
+        htmlFor='photo'
+        className={classNames(labelClassName, 'block text-sm font-medium text-gray-700')}
+      >
         {label}
       </label>
       <div className='mt-1 sm:mt-0 sm:col-span-2'>
@@ -160,18 +171,38 @@ export default function ProfileForm({ user, onSave, onCancel }: ProfileFormProps
       <form className='m-8 space-y-8 divide-y divide-gray-200'>
         <div className='space-y-8 divide-y divide-gray-200 sm:space-y-5'>
           <div className='mt-6 sm:mt-5 space-y-6 sm:space-y-5'>
-            <LabelEdit label='Username' type='text' text={username} setText={setUsername} pattern={patternUsername} />
+            <LabelEdit
+              label='Username'
+              type='text'
+              text={username}
+              setText={setUsername}
+              pattern={patternUsernameString}
+            />
             <LabelEdit
               editClassName='bg-gray-200'
               label='E-mail'
               type='email'
               text={user.email}
-              pattern={patternEmail}
+              pattern={patternEmailString}
             />
-            <LabelEdit label='Name' type='text' text={name} setText={setName} pattern={patternNameSurname} />
-            <LabelImage label='Photo' image={image} setImage={setImage} pattern={patternUrl} />
+            <LabelEdit
+              label='Name'
+              type='text'
+              text={name}
+              setText={setName}
+              pattern={patternNameSurnameString}
+            />
+            <LabelImage
+              label='Photo'
+              image={image}
+              setImage={setImage}
+              pattern={patternUrlString}
+            />
             <div className='sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5'>
-              <label htmlFor='country' className='block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2'>
+              <label
+                htmlFor='country'
+                className='block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2'
+              >
                 Country
               </label>
               <div className='mt-1 sm:mt-0 sm:col-span-2'>

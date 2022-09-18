@@ -38,7 +38,7 @@ if (process.env.NODE_ENV === 'production') {
   prisma = prismaClientFactory(false);
 } else {
   if (!global.prisma) {
-    global.prisma = prismaClientFactory(false);
+    global.prisma = prismaClientFactory(true);
   }
   prisma = global.prisma;
 }

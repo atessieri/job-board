@@ -1,6 +1,7 @@
-import apiHandler from 'lib/server/apiHandler';
 import prisma from 'lib/server/database/prisma';
-import { getUser, getUsers } from 'lib/server/database/userManage';
+import { getAuthorApplications } from 'lib/server/database/applicationManage';
+import { getUser } from 'lib/server/database/userManage';
+import apiHandler from 'lib/server/apiHandler';
 import { Role } from '@prisma/client';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -16,17 +17,18 @@ const callbackHandler: ApiHandlerCallback = async (
     return res.status(401).json({ message: 'Not logged in' });
   }
   const user = await getUser(prisma, session.user.id);
-  if (typeof user === 'undefined' || user.role !== Role.ADMIN) {
+  if (typeof user === 'undefined' || user.role !== Role.WORKER) {
     return res.status(405).json({ message: 'Metod not allowed' });
   }
   switch (req.method) {
     case 'GET': {
-      const users = await getUsers(
+      const applications = await getAuthorApplications(
         prisma,
+        session.user.id,
         typeof req.query.take === 'string' ? parseInt(req.query.take) : undefined,
-        typeof req.query.cursor === 'string' ? req.query.cursor : undefined,
+        typeof req.query.cursor === 'string' ? parseInt(req.query.cursor) : undefined,
       );
-      return res.status(200).json(users);
+      return res.status(200).json(applications);
     }
   }
   return res.status(501).json({ message: 'Metod not implemented' });

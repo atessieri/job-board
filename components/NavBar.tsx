@@ -49,7 +49,9 @@ function ImageName({ className, user }: ImageNameProps) {
           <GrayMan className='h-10 w-10' />
         )}
       </div>
-      <span className={classNames(className, 'text-blue-800')}>{user.name ? user.name : user.email}</span>
+      <span className={classNames(className, 'text-blue-800')}>
+        {user.name ? user.name : user.email}
+      </span>
     </div>
   );
 }
@@ -125,7 +127,9 @@ export default function NavBar({ logo, navigation, userNavigation, user }: NavBa
               <div className='flex'>
                 <div className='flex-shrink-0 flex items-center'>
                   <div className='block rounded-full'>
-                    {logo && <Image src={logo} alt='Logo Job Board' width='50' height='50' />}
+                    <Link href='/' className='hover:border-gray-300'>
+                      {logo && <Image src={logo} alt='Logo Job Board' width='50' height='50' />}
+                    </Link>
                   </div>
                 </div>
                 <div className='hidden sm:ml-6 sm:flex sm:space-x-8'>
@@ -146,7 +150,11 @@ export default function NavBar({ logo, navigation, userNavigation, user }: NavBa
                 </div>
               </div>
               <div className='hidden sm:flex sm:items-center'>
-                {user ? <UserMenuDropDown userNavigation={userNavigation} user={user} /> : <LoginButton />}
+                {user ? (
+                  <UserMenuDropDown userNavigation={userNavigation} user={user} />
+                ) : (
+                  <LoginButton />
+                )}
               </div>
               <div className='-mr-2 flex items-center sm:hidden'>
                 {/* Mobile menu button */}

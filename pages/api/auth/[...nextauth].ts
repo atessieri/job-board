@@ -1,6 +1,6 @@
 import EmailProvider from 'next-auth/providers/email';
 import NextAuth from 'next-auth';
-import prisma from 'lib/database/prisma';
+import prisma from 'lib/server/database/prisma';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { NextAuthOptions } from 'next-auth';

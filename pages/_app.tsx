@@ -1,6 +1,7 @@
 import 'styles/globals.css';
 import type { AppProps } from 'next/app';
 import { SessionProvider, useSession } from 'next-auth/react';
+import { Spinner } from 'components/Spinner';
 
 type AuthProps = {
   children: JSX.Element;
@@ -9,7 +10,7 @@ type AuthProps = {
 function Auth({ children }: AuthProps) {
   const { status } = useSession();
   if (status === 'loading') {
-    return <div>Loading...</div>;
+    return <Spinner text='Loading...' />;
   }
   return children;
 }

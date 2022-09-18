@@ -1,8 +1,8 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Fragment, useState, useEffect } from 'react';
 import { Transition } from '@headlessui/react';
-import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/outline';
-import { XIcon } from '@heroicons/react/solid';
+import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 export default function Notification({ state, onClose }) {
   const [show, setShow] = useState(state.isOpen);
@@ -49,7 +49,7 @@ export default function Notification({ state, onClose }) {
                       }}
                     >
                       <span className='sr-only'>Close</span>
-                      <XIcon className='h-5 w-5' aria-hidden='true' />
+                      <XMarkIcon className='h-5 w-5' aria-hidden='true' />
                     </button>
                   </div>
                 </div>

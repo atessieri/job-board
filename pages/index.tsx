@@ -4,20 +4,20 @@ import PageLayout from 'components/PageLayout';
 import JobManage from 'lib/database/JobManage';
 import prisma from 'lib/database/prisma';
 import UserManage from 'lib/database/UserManage';
-import { genericServerSideProps } from 'lib/genericHandler';
+import { genericServerSideProps } from 'lib/apiHandler';
 import Error from 'next/error';
 
 import type { Session } from 'next-auth';
 
 import type { JobWithAuthor } from 'lib/database/JobManage';
 
-import type { Props } from 'lib/genericHandler';
+import type { Props } from 'lib/apiHandler';
 
 import type User from 'lib/database/UserManage';
 
 import type { GetServerSidePropsContext } from 'next';
 
-import type { ServerSidePropsCallback } from 'lib/genericHandler';
+import type { ServerSidePropsCallback } from 'lib/apiHandler';
 
 type DataProps = {
   user?: User;

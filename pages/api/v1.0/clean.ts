@@ -1,7 +1,8 @@
 import apiHandler from 'lib/server/apiHandler';
 import prisma from 'lib/server/database/prisma';
-import { getUser, getUsers } from 'lib/server/database/userManage';
+import { getUser } from 'lib/server/database/userManage';
 import { Role } from '@prisma/client';
+import { cleanDatabase } from 'lib/server/database/utility';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { ApiHandlerCallback } from 'lib/server/apiHandler';
@@ -20,13 +21,10 @@ const callbackHandler: ApiHandlerCallback = async (
     return res.status(405).json({ message: 'Metod not allowed' });
   }
   switch (req.method) {
-    case 'GET': {
-      const users = await getUsers(
-        prisma,
-        typeof req.query.take === 'string' ? parseInt(req.query.take) : undefined,
-        typeof req.query.cursor === 'string' ? req.query.cursor : undefined,
-      );
-      return res.status(200).json(users);
+    case 'DELETE': {
+      await cleanDatabase(prisma, session.user.id);
+      res.status(200).end();
+      return;
     }
   }
   return res.status(501).json({ message: 'Metod not implemented' });
