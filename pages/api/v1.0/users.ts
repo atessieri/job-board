@@ -7,6 +7,41 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import type { ApiHandlerCallback } from 'lib/server/apiHandler';
 import type { Session } from 'next-auth';
 
+/**
+ *  @swagger
+ *  /api/v1.0/users:
+ *    get:
+ *      description: Returns a list of users limited by 'take' parameter
+ *                   and starting from 'cursor' parameter.
+ *      parameters:
+ *        - in: query
+ *          name: take
+ *          required: false
+ *          schema:
+ *            type: integer
+ *            format: int32
+ *            minimum: 1
+ *            maximum: 1000
+ *            default: 10
+ *          description: Number of records to be received.
+ *          example: 10
+ *        - in: query
+ *          name: cursor
+ *          required: false
+ *          schema:
+ *            type: string
+ *          description: The identification of the starting point element from which to start.
+ *          example: 'cl5kt7g1005015nbfqoos7lgs'
+ *      responses:
+ *        '200':
+ *          description: List of users
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/UserType'
+ */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,
   res: NextApiResponse,

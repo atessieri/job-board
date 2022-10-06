@@ -1,21 +1,18 @@
 import { CustomError } from 'lib/exceptions/CustomError';
 import { unstable_getServerSession } from 'next-auth';
 import { authOptions } from 'pages/api/auth/[...nextauth]';
-
 import { Prisma } from '@prisma/client';
-
 import { ParameterFormatError } from 'lib/exceptions/ParameterFormatError';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { Session } from 'next-auth';
+import type { GetServerSidePropsContext } from 'next';
 
 export type ApiHandlerCallback = (
   req: NextApiRequest,
   res: NextApiResponse,
   session: Session | null,
 ) => Promise<void>;
-
-import type { GetServerSidePropsContext } from 'next';
 
 export default async function apiHandler(
   req: NextApiRequest,

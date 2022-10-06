@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { fieldEncryptionMiddleware } from 'prisma-field-encryption';
 
 function prismaClientFactory(tracerEnabler = false) {
   const prisma = new PrismaClient({

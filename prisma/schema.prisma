@@ -70,10 +70,11 @@ model Session {
 model Job {
   id          Int             @id @default(autoincrement())
   createdAt   DateTime        @default(now())
-  title       String
-  description String
+  updatedAt   DateTime        @updatedAt
+  title       String         
+  description String          
   salary      Decimal         @db.Decimal(9,2)
-  location    String
+  location    String          
   published   Boolean      
   author      User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId    String
@@ -84,7 +85,8 @@ model Job {
 model Application {
   id          Int             @id @default(autoincrement())
   createdAt   DateTime        @default(now())
-  coverLetter String
+  updatedAt   DateTime        @updatedAt
+  coverLetter String          
   job         Job             @relation(fields: [jobId], references: [id], onDelete: Cascade)
   jobId       Int
   author      User            @relation(fields: [authorId], references: [id], onDelete: Cascade)

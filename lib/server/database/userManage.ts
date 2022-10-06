@@ -1,9 +1,78 @@
-import { ParameterFormatError, formatErrorCode } from 'lib/exceptions/ParameterFormatError';
-import { patternEmail, patternNameSurname, patternUrl, patternUsername } from 'lib/regexPattern';
+import {
+  ParameterFormatError,
+  formatErrorCode,
+  minimumValueErrorCode,
+  maximumValueErrorCode,
+} from 'lib/exceptions/ParameterFormatError';
+import {
+  maximumTakeRecordNumber,
+  minimumTakeRecordNumber,
+  patternEmail,
+  patternNameSurname,
+  patternUrl,
+  patternUsername,
+} from 'lib/regexPattern';
 import { PrismaClient } from '@prisma/client';
 
 import type { Role } from '@prisma/client';
 
+/**
+ *  @swagger
+ *  components:
+ *    schemas:
+ *      Role:
+ *        description: The role of the user
+ *        type: string
+ *        enum:
+ *          - ADMIN
+ *          - COMPANY
+ *          - WORKER
+ *        default: WORKER
+ *        example: WORKER
+ *      UserType:
+ *        description: Information about the user
+ *        type: object
+ *        properties:
+ *          id:
+ *            description: The identification of the user
+ *            type: string
+ *            example: 'cl5kt7g1005015nbfqoos7lgs'
+ *          name:
+ *            description: Name and surname of the user
+ *            type: string
+ *            pattern: '^[a-zA-Z0-9\s]{1,}$'
+ *            nullable: true
+ *            example: 'John Doe'
+ *          email:
+ *            description: E-mail of the user used to authenticate it. It is unique
+ *            type: string
+ *            pattern: '^[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$'
+ *            example: 'john.doe@example.com'
+ *          username:
+ *            description: Username of the user
+ *            type: string
+ *            pattern: '^[a-zA-Z0-9.]{1,}$'
+ *            nullable: true
+ *            example: 'j.doe'
+ *          imagePath:
+ *            description: Path of the user picture
+ *            type: string
+ *            pattern: '^(\b(https?|ftp|file)://)[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]$'
+ *            nullable: true
+ *            example: 'https://picture.example.com'
+ *          role:
+ *            $ref: '#/components/schemas/Role'
+ *          createdAt:
+ *            description: Date and time when the user was created
+ *            type: string
+ *            format: date-time
+ *            example: '2017-07-21T17:32:28Z'
+ *          updatedAt:
+ *            description: Date and time when the user was updated
+ *            type: string
+ *            format: date-time
+ *            example: '2017-07-21T17:32:28Z'
+ */
 export type UserType = {
   id: string;
   name: string | null;
@@ -139,6 +208,13 @@ export async function updateUser(
 }
 
 export async function getUsers(prisma: PrismaClient, take?: number, cursor?: string) {
+  if (typeof take != 'undefined') {
+    if (take < minimumTakeRecordNumber) {
+      throw new ParameterFormatError(`Parameter not in range: take ${take}`, minimumValueErrorCode);
+    } else if (take > maximumTakeRecordNumber) {
+      throw new ParameterFormatError(`Parameter not in range: take ${take}`, maximumValueErrorCode);
+    }
+  }
   const queryResult = await prisma.user.findMany({
     select: {
       id: true,
@@ -177,6 +253,13 @@ export async function getUsersRole(
   take?: number,
   cursor?: string,
 ) {
+  if (typeof take != 'undefined') {
+    if (take < minimumTakeRecordNumber) {
+      throw new ParameterFormatError(`Parameter not in range: take ${take}`, minimumValueErrorCode);
+    } else if (take > maximumTakeRecordNumber) {
+      throw new ParameterFormatError(`Parameter not in range: take ${take}`, maximumValueErrorCode);
+    }
+  }
   const queryResult = await prisma.user.findMany({
     select: {
       id: true,

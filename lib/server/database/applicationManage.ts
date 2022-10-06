@@ -1,27 +1,99 @@
 import { PrismaClient } from '@prisma/client';
 import {
   formatErrorCode,
+  maximumValueErrorCode,
+  minimumValueErrorCode,
   ParameterFormatError,
   sizeErrorCode,
 } from 'lib/exceptions/ParameterFormatError';
-import { patternAppCoverLetter } from 'lib/regexPattern';
+import {
+  appCoverLetterMaxSize,
+  maximumTakeRecordNumber,
+  minimumTakeRecordNumber,
+  patternAppCoverLetter,
+} from 'lib/regexPattern';
 
 import type { UserType } from 'lib/server/database/userManage';
 import type { JobType } from 'lib/server/database/jobManage';
 
+/**
+ *  @swagger
+ *  components:
+ *    schemas:
+ *      ApplicationType:
+ *        description: Information about the application
+ *        type: object
+ *        properties:
+ *          id:
+ *            description: The identification of the application
+ *            type: integer
+ *            format: int32
+ *            example: 10
+ *          createdAt:
+ *            description: Date and time when the application was created
+ *            type: string
+ *            format: date-time
+ *            example: '2017-07-21T17:32:28Z'
+ *          updatedAt:
+ *            description: Date and time when the application was updated
+ *            type: string
+ *            format: date-time
+ *            example: '2017-07-21T17:32:28Z'
+ *          coverLetter:
+ *            description: The cover letter of the application
+ *            type: string
+ *            maxLength: 1000
+ *            example: 'Example cover letter'
+ *          jobId:
+ *            description: The identification of the job post
+ *            type: integer
+ *            format: int32
+ *            example: 10
+ *          authorId:
+ *            description: The identification of the application author
+ *            type: string
+ *            example: 'cl5kt7g1005015nbfqoos7lgs'
+ */
 export type ApplicationType = {
   id: number;
   createdAt: string;
+  updatedAt: string;
   coverLetter: String;
   jobId: number;
   authorId: string;
 };
 
+/**
+ *  @swagger
+ *  components:
+ *    schemas:
+ *      ApplicationAuthorType:
+ *        description: Information about the application and its author
+ *        type: object
+ *        properties:
+ *          application:
+ *            $ref: '#/components/schemas/ApplicationType'
+ *          author:
+ *            $ref: '#/components/schemas/UserType'
+ */
 export type ApplicationAuthorType = {
   application: ApplicationType;
   author: UserType;
 };
 
+/**
+ *  @swagger
+ *  components:
+ *    schemas:
+ *      ApplicationJobType:
+ *        description: Information about the application and the job post related
+ *        type: object
+ *        properties:
+ *          application:
+ *            $ref: '#/components/schemas/ApplicationType'
+ *          job:
+ *            $ref: '#/components/schemas/JobType'
+ */
 export type ApplicationJobType = {
   application: ApplicationType;
   job: JobType;
@@ -33,6 +105,13 @@ export async function getJobApplications(
   take?: number,
   cursor?: number,
 ) {
+  if (typeof take != 'undefined') {
+    if (take < minimumTakeRecordNumber) {
+      throw new ParameterFormatError(`Parameter not in range: take ${take}`, minimumValueErrorCode);
+    } else if (take > maximumTakeRecordNumber) {
+      throw new ParameterFormatError(`Parameter not in range: take ${take}`, maximumValueErrorCode);
+    }
+  }
   if (isNaN(jobId)) {
     throw new ParameterFormatError(`Parameter not correct: jobId ${jobId}`, formatErrorCode);
   }
@@ -68,6 +147,7 @@ export async function getJobApplications(
       application: {
         id: application.id,
         createdAt: application.createdAt.toISOString(),
+        updatedAt: application.updatedAt.toISOString(),
         coverLetter: application.coverLetter,
         jobId: application.jobId,
         authorId: application.authorId,
@@ -92,12 +172,20 @@ export async function getAuthorApplications(
   take?: number,
   cursor?: number,
 ) {
+  if (typeof take != 'undefined') {
+    if (take < minimumTakeRecordNumber) {
+      throw new ParameterFormatError(`Parameter not in range: take ${take}`, minimumValueErrorCode);
+    } else if (take > maximumTakeRecordNumber) {
+      throw new ParameterFormatError(`Parameter not in range: take ${take}`, maximumValueErrorCode);
+    }
+  }
   const queryResult = await prisma.application.findMany({
     include: {
       job: {
         select: {
           id: true,
           createdAt: true,
+          updatedAt: true,
           title: true,
           description: true,
           salary: true,
@@ -124,6 +212,7 @@ export async function getAuthorApplications(
       application: {
         id: application.id,
         createdAt: application.createdAt.toISOString(),
+        updatedAt: application.updatedAt.toISOString(),
         coverLetter: application.coverLetter,
         jobId: application.jobId,
         authorId: application.authorId,
@@ -131,6 +220,7 @@ export async function getAuthorApplications(
       job: {
         id: application.job.id,
         createdAt: application.job.createdAt.toISOString(),
+        updatedAt: application.job.updatedAt.toISOString(),
         title: application.job.title,
         description: application.job.description,
         salary: application.job.salary.toString(),
@@ -148,10 +238,16 @@ export async function createApplication(
   jobId: number,
   jobAuthorId: string,
 ) {
+  if (coverLetter.length > appCoverLetterMaxSize) {
+    throw new ParameterFormatError(
+      `Parameter not correct: coverLetter size ${coverLetter.length} too long`,
+      sizeErrorCode,
+    );
+  }
   if (!patternAppCoverLetter.test(coverLetter)) {
     throw new ParameterFormatError(
-      `Parameter not correct: title size ${coverLetter.length} too long`,
-      sizeErrorCode,
+      `Parameter not correct: coverLetter ${coverLetter}`,
+      formatErrorCode,
     );
   }
   if (isNaN(jobId)) {
@@ -171,6 +267,7 @@ export async function createApplication(
   return {
     id: queryResult.id,
     createdAt: queryResult.createdAt.toISOString(),
+    updatedAt: queryResult.updatedAt.toISOString(),
     coverLetter: queryResult.coverLetter,
     jobId: queryResult.jobId,
     authorId: queryResult.authorId,
@@ -195,6 +292,7 @@ export async function getApplication(prisma: PrismaClient, applicationId: number
   return {
     id: queryResult.id,
     createdAt: queryResult.createdAt.toISOString(),
+    updatedAt: queryResult.updatedAt.toISOString(),
     coverLetter: queryResult.coverLetter,
     jobId: queryResult.jobId,
     authorId: queryResult.authorId,
@@ -212,11 +310,19 @@ export async function updateApplication(
       formatErrorCode,
     );
   }
-  if (typeof coverLetter === 'string' && !patternAppCoverLetter.test(coverLetter)) {
-    throw new ParameterFormatError(
-      `Parameter not correct: title size ${coverLetter.length} too long`,
-      sizeErrorCode,
-    );
+  if (typeof coverLetter === 'string') {
+    if (coverLetter.length > appCoverLetterMaxSize) {
+      throw new ParameterFormatError(
+        `Parameter not correct: coverLetter size ${coverLetter.length} too long`,
+        sizeErrorCode,
+      );
+    }
+    if (!patternAppCoverLetter.test(coverLetter)) {
+      throw new ParameterFormatError(
+        `Parameter not correct: coverLetter ${coverLetter}`,
+        formatErrorCode,
+      );
+    }
   }
   const queryResult = await prisma.application.update({
     data: {
@@ -229,6 +335,7 @@ export async function updateApplication(
   return {
     id: queryResult.id,
     createdAt: queryResult.createdAt.toISOString(),
+    updatedAt: queryResult.updatedAt.toISOString(),
     coverLetter: queryResult.coverLetter,
     jobId: queryResult.jobId,
     authorId: queryResult.authorId,

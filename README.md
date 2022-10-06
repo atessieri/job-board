@@ -1,24 +1,30 @@
 ## Installation
 
 ```bash
-$npx create-next-app@latest --typescript week-10-job-board
-$npm install -D prisma tailwindcss postcss autoprefixer @faker-js/faker
-$npm install prisma-field-encryption next-auth pg @next-auth/prisma-adapter nodemailer sharp @headlessui/react @heroicons/react @tailwindcss/forms
-$npx tailwindcss init -p
-$npx prisma init
+npx create-next-app@latest --typesnpm cript job-board
+npm install -D prisma tailwindcss postcss autoprefixer @faker-js/faker
+npm install prisma-field-encryption next-auth pg @next-auth/prisma-adapter nodemailer sharp @headlessui/react @heroicons/react @tailwindcss/forms
+npx tailwindcss init -p
+npx prisma init
+```
+
+Generete swagger file (OpenAPI standard) from CLI:
+
+```bash
+npx next-swagger-doc-cli next-swagger-doc.json --output swagger.json
 ```
 
 Update:
 
 ```bash
-$npx npm-check-updates
-$npx npm-check-updates -u
+npx npm-check-updates
+npx npm-check-updates -u
 ```
 
 Generate key
 
 ```bash
-$npx cloak generate
+npx cloak generate
 ```
 
 Create mail [Mail Trap](https://mailtrap.io) for testing
@@ -27,13 +33,13 @@ Generate secret (32 bytes) with [Generate Secret](https://generate-secret.vercel
 To set the database
 
 ```bash
-$npx prisma migrate dev
+npx prisma migrate dev
 ```
 
 To generate again the prisma client
 
 ```bash
-$npx prisma generate
+npx prisma generate
 ```
 
 Check to update packages

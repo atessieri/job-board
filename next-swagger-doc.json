@@ -1,0 +1,29 @@
+{
+  "apiFolder": "pages/api",
+  "schemaFolders": ["lib"],
+  "definition": {
+    "openapi": "3.0.3",
+    "info": {
+      "title": "Job Board API",
+      "version": "1.0",
+      "license": {
+        "name": "GPLv3",
+        "url": "https://www.gnu.org/licenses/gpl-3.0.html"
+      },
+      "contact": {
+        "name": "Andrea Tessieri",
+        "email": "andrea.tessieri@gmail.com"
+      }
+    },
+    "servers": [
+      {
+        "url": "http://cluster-2.router-1.tradate.home:3000",
+        "description": "Development server"
+      },
+      {
+        "url": "https://job-board-test.vercel.app",
+        "description": "Production server"
+      }
+    ]
+  }
+}

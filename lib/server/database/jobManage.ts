@@ -1,21 +1,82 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import {
   formatErrorCode,
+  maximumValueErrorCode,
+  minimumValueErrorCode,
   ParameterFormatError,
   sizeErrorCode,
 } from 'lib/exceptions/ParameterFormatError';
+
 import {
   patternDecimal,
   patternJobLocation,
   patternJobTitle,
   patternJobDescription,
+  jobTitleMaxSize,
+  jobDescriptionMaxSize,
+  jobLocationMaxSize,
+  minimumTakeRecordNumber,
+  maximumTakeRecordNumber,
 } from 'lib/regexPattern';
 
 import type { UserType } from 'lib/server/database/userManage';
 
+/**
+ *  @swagger
+ *  components:
+ *    schemas:
+ *      JobType:
+ *        description: Information about the job
+ *        type: object
+ *        properties:
+ *          id:
+ *            description: The identification of job
+ *            type: integer
+ *            format: int32
+ *            example: 10
+ *          createdAt:
+ *            description: Date and time when the job was created
+ *            type: string
+ *            format: date-time
+ *            example: '2017-07-21T17:32:28Z'
+ *          updatedAt:
+ *            description: Date and time when the job was updated
+ *            type: string
+ *            format: date-time
+ *            example: '2017-07-21T17:32:28Z'
+ *          title:
+ *            description: The title of the job post
+ *            type: string
+ *            maxLength: 80
+ *            example: 'Example title'
+ *          description:
+ *            description: The description of the job post
+ *            type: string
+ *            maxLength: 2000
+ *            example: 'Example description'
+ *          salary:
+ *            description: Salary of the job post
+ *            type: string
+ *            pattern: '^\d{1,6}(\.\d{0,3})?$'
+ *            example: '1234.122'
+ *          location:
+ *            description: Location of the job
+ *            type: string
+ *            maxLength: 80
+ *            example: 'Milan'
+ *          published:
+ *            description: True if the job post is public
+ *            type: boolean
+ *            example: true
+ *          authorId:
+ *            description: The identification of the job post author
+ *            type: string
+ *            example: 'cl5kt7g1005015nbfqoos7lgs'
+ */
 export type JobType = {
   id: number;
   createdAt: string;
+  updatedAt: string;
   title: string;
   description: string;
   salary: string;
@@ -24,11 +85,45 @@ export type JobType = {
   authorId: string;
 };
 
+/**
+ *  @swagger
+ *  components:
+ *    schemas:
+ *      JobAppCountType:
+ *        description: Information about the job and the application number
+ *        type: object
+ *        properties:
+ *          job:
+ *            $ref: '#/components/schemas/JobType'
+ *          appCount:
+ *            description: The application number
+ *            type: integer
+ *            format: int32
+ *            example: 10
+ */
 export type JobAppCountType = {
   job: JobType;
   appCount: number;
 };
 
+/**
+ *  @swagger
+ *  components:
+ *    schemas:
+ *      JobAuthorAppCountType:
+ *        description: Information about the job, the job post author and the application number
+ *        type: object
+ *        properties:
+ *          job:
+ *            $ref: '#/components/schemas/JobType'
+ *          author:
+ *            $ref: '#/components/schemas/UserType'
+ *          appCount:
+ *            description: The application number
+ *            type: integer
+ *            format: int32
+ *            example: 10
+ */
 export type JobAuthorAppCountType = {
   job: JobType;
   author: UserType;
@@ -42,6 +137,13 @@ export async function getJobs(
   take?: number,
   cursor?: number,
 ) {
+  if (typeof take != 'undefined') {
+    if (take < minimumTakeRecordNumber) {
+      throw new ParameterFormatError(`Parameter not in range: take ${take}`, minimumValueErrorCode);
+    } else if (take > maximumTakeRecordNumber) {
+      throw new ParameterFormatError(`Parameter not in range: take ${take}`, maximumValueErrorCode);
+    }
+  }
   let published: boolean;
   if (typeof onlyPublished === 'undefined' || onlyPublished === 'true') {
     published = true;
@@ -95,6 +197,7 @@ export async function getJobs(
       job: {
         id: job.id,
         createdAt: job.createdAt.toISOString(),
+        updatedAt: job.updatedAt.toISOString(),
         title: job.title,
         description: job.description,
         salary: job.salary.toString(),
@@ -126,25 +229,40 @@ export async function createJob(
   location: string,
   onlyPublished?: string,
 ) {
-  if (!patternJobTitle.test(title)) {
+  if (title.length > jobTitleMaxSize) {
     throw new ParameterFormatError(
       `Parameter not correct: title size ${title.length} too long`,
       sizeErrorCode,
     );
   }
+  if (!patternJobTitle.test(title)) {
+    throw new ParameterFormatError(`Parameter not correct: title ${title}`, formatErrorCode);
+  }
+  if (description.length > jobDescriptionMaxSize) {
+    throw new ParameterFormatError(
+      `Parameter not correct: description ${description.length} too long`,
+      sizeErrorCode,
+    );
+  }
   if (!patternJobDescription.test(description)) {
     throw new ParameterFormatError(
-      `Parameter not correct: description size ${description.length} too long`,
-      sizeErrorCode,
+      `Parameter not correct: description ${description}`,
+      formatErrorCode,
     );
   }
   if (!patternDecimal.test(salary)) {
     throw new ParameterFormatError(`Parameter not correct: salary ${salary}`, formatErrorCode);
   }
-  if (!patternJobLocation.test(location)) {
+  if (location.length > jobLocationMaxSize) {
     throw new ParameterFormatError(
       `Parameter not correct: location size ${location.length} too long`,
       sizeErrorCode,
+    );
+  }
+  if (!patternJobLocation.test(location)) {
+    throw new ParameterFormatError(
+      `Parameter not correct: location ${location} too long`,
+      formatErrorCode,
     );
   }
   let published: boolean;
@@ -173,6 +291,7 @@ export async function createJob(
   return {
     id: queryResult.id,
     createdAt: queryResult.createdAt.toISOString(),
+    updatedAt: queryResult.updatedAt.toISOString(),
     title: queryResult.title,
     description: queryResult.description,
     salary: queryResult.salary.toString(),
@@ -203,6 +322,7 @@ export async function getJob(prisma: PrismaClient, jobId: number) {
     job: {
       id: queryResult.id,
       createdAt: queryResult.createdAt.toISOString(),
+      updatedAt: queryResult.updatedAt.toISOString(),
       title: queryResult.title,
       description: queryResult.description,
       salary: queryResult.salary.toString(),
@@ -226,26 +346,47 @@ export async function updateJob(
   if (isNaN(jobId)) {
     throw new ParameterFormatError(`Parameter not correct: jobId ${jobId}`, formatErrorCode);
   }
-  if (typeof title === 'string' && !patternJobTitle.test(title)) {
-    throw new ParameterFormatError(
-      `Parameter not correct: title size ${title.length} too long`,
-      sizeErrorCode,
-    );
+  if (typeof title === 'string') {
+    if (title.length > jobTitleMaxSize) {
+      throw new ParameterFormatError(
+        `Parameter not correct: title size ${title.length} too long`,
+        sizeErrorCode,
+      );
+    }
+    if (!patternJobTitle.test(title)) {
+      throw new ParameterFormatError(`Parameter not correct: title ${title}`, formatErrorCode);
+    }
   }
-  if (typeof description === 'string' && !patternJobDescription.test(description)) {
-    throw new ParameterFormatError(
-      `Parameter not correct: description size ${description.length} too long`,
-      sizeErrorCode,
-    );
+  if (typeof description === 'string') {
+    if (description.length > jobDescriptionMaxSize) {
+      throw new ParameterFormatError(
+        `Parameter not correct: description ${description.length} too long`,
+        sizeErrorCode,
+      );
+    }
+    if (!patternJobDescription.test(description)) {
+      throw new ParameterFormatError(
+        `Parameter not correct: description ${description}`,
+        formatErrorCode,
+      );
+    }
   }
   if (typeof salary === 'string' && !patternDecimal.test(salary)) {
     throw new ParameterFormatError(`Parameter not correct: salary ${salary}`, formatErrorCode);
   }
-  if (typeof location === 'string' && !patternJobLocation.test(location)) {
-    throw new ParameterFormatError(
-      `Parameter not correct: location size ${location.length} too long`,
-      sizeErrorCode,
-    );
+  if (typeof location === 'string') {
+    if (location.length > jobLocationMaxSize) {
+      throw new ParameterFormatError(
+        `Parameter not correct: location size ${location.length} too long`,
+        sizeErrorCode,
+      );
+    }
+    if (!patternJobLocation.test(location)) {
+      throw new ParameterFormatError(
+        `Parameter not correct: location ${location} too long`,
+        formatErrorCode,
+      );
+    }
   }
   let published: boolean | undefined;
   if (typeof onlyPublished === 'undefined') {
@@ -272,6 +413,7 @@ export async function updateJob(
   return {
     id: queryResult.id,
     createdAt: queryResult.createdAt.toISOString(),
+    updatedAt: queryResult.updatedAt.toISOString(),
     title: queryResult.title,
     description: queryResult.description,
     salary: queryResult.salary.toString(),
