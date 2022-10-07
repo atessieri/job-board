@@ -35,7 +35,6 @@ const callbackHandler: ApiHandlerCallback = async (
         prisma,
         req.query.id,
         req.body.name,
-        req.body.email,
         req.body.username,
         req.body.imagePath,
         req.body.role,

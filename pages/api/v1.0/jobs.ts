@@ -1,9 +1,6 @@
 import apiHandler from 'lib/server/apiHandler';
 import prisma from 'lib/server/database/prisma';
-import { getUser } from 'lib/server/database/userManage';
 import { getJobs } from 'lib/server/database/jobManage';
-import { formatErrorCode, ParameterFormatError } from 'lib/exceptions/ParameterFormatError';
-import { Role } from '@prisma/client';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { ApiHandlerCallback } from 'lib/server/apiHandler';
@@ -13,12 +10,11 @@ import type { Session } from 'next-auth';
  *  @swagger
  *  /api/v1.0/jobs:
  *    get:
- *      description: Returns a list of job posts published limited by 'take' parameter
- *                   and starting from 'cursor' parameter.
+ *      description: Return a list of job posts published limited by 'take' parameter
+ *                   and starting from 'cursor' parameter. Everybody can send it.
  *      parameters:
  *        - in: query
  *          name: take
- *          required: false
  *          schema:
  *            type: integer
  *            format: int32
@@ -29,7 +25,6 @@ import type { Session } from 'next-auth';
  *          example: 10
  *        - in: query
  *          name: cursor
- *          required: false
  *          schema:
  *            type: string
  *          description: The identification of the starting point element from which to start.

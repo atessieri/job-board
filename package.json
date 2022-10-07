@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "apidoc": "next-swagger-doc-cli next-swagger-doc.json --output swagger.json"
   },
   "dependencies": {
     "@faker-js/faker": "^7.5.0",

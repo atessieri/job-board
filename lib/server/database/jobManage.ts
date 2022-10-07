@@ -28,6 +28,16 @@ import type { UserType } from 'lib/server/database/userManage';
  *      JobType:
  *        description: Information about the job
  *        type: object
+ *        required:
+ *          - id
+ *          - createdAt
+ *          - updatedAt
+ *          - title
+ *          - description
+ *          - salary
+ *          - location
+ *          - published
+ *          - authorId
  *        properties:
  *          id:
  *            description: The identification of job
@@ -92,6 +102,9 @@ export type JobType = {
  *      JobAppCountType:
  *        description: Information about the job and the application number
  *        type: object
+ *        required:
+ *          - job
+ *          - appCount
  *        properties:
  *          job:
  *            $ref: '#/components/schemas/JobType'
@@ -113,6 +126,10 @@ export type JobAppCountType = {
  *      JobAuthorAppCountType:
  *        description: Information about the job, the job post author and the application number
  *        type: object
+ *        required:
+ *          - job
+ *          - author
+ *          - appCount
  *        properties:
  *          job:
  *            $ref: '#/components/schemas/JobType'

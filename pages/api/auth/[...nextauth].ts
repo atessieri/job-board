@@ -5,6 +5,23 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { NextAuthOptions } from 'next-auth';
 
+/**
+ *  @swagger
+ *  components:
+ *    securitySchemes:
+ *      session-token:
+ *        type: apiKey
+ *        in: cookie
+ *        name: next-auth.session-token
+ *      csrf-token:
+ *        type: apiKey
+ *        in: cookie
+ *        name: next-auth.csrf-token
+ *      callback-url:
+ *        type: apiKey
+ *        in: cookie
+ *        name: next-auth.callback-url
+ */
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [

@@ -24,6 +24,13 @@
         "url": "https://job-board-test.vercel.app",
         "description": "Production server"
       }
+    ],
+    "security": [
+      {
+        "session-token": [],
+        "csrf-token": [],
+        "callback-url": []
+      }
     ]
   }
 }

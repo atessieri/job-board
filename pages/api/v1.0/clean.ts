@@ -8,6 +8,16 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import type { ApiHandlerCallback } from 'lib/server/apiHandler';
 import type { Session } from 'next-auth';
 
+/**
+ *  @swagger
+ *  /api/v1.0/clean:
+ *    delete:
+ *      description: Remove every applications, jobs and users except the current one.
+ *                   Only the user with ADMIN role can send it.
+ *      responses:
+ *        '200':
+ *          description: The operation is performed correctly
+ */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,
   res: NextApiResponse,

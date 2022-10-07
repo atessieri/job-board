@@ -32,6 +32,15 @@ import type { Role } from '@prisma/client';
  *      UserType:
  *        description: Information about the user
  *        type: object
+ *        required:
+ *          - id
+ *          - name
+ *          - email
+ *          - username
+ *          - imagePath
+ *          - role
+ *          - createdAt
+ *          - updatedAt
  *        properties:
  *          id:
  *            description: The identification of the user
@@ -84,6 +93,42 @@ export type UserType = {
   updatedAt: string;
 };
 
+/**
+ *  @swagger
+ *  components:
+ *    schemas:
+ *      CreateUserType:
+ *        description: Information about the user to be created
+ *        type: object
+ *        required:
+ *          - email
+ *        properties:
+ *          name:
+ *            description: Name and surname of the user
+ *            type: string
+ *            pattern: '^[a-zA-Z0-9\s]{1,}$'
+ *            nullable: true
+ *            example: 'John Doe'
+ *          email:
+ *            description: E-mail of the user used to authenticate it. It is unique
+ *            type: string
+ *            pattern: '^[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$'
+ *            example: 'john.doe@example.com'
+ *          username:
+ *            description: Username of the user
+ *            type: string
+ *            pattern: '^[a-zA-Z0-9.]{1,}$'
+ *            nullable: true
+ *            example: 'j.doe'
+ *          imagePath:
+ *            description: Path of the user picture
+ *            type: string
+ *            pattern: '^(\b(https?|ftp|file)://)[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]$'
+ *            nullable: true
+ *            example: 'https://picture.example.com'
+ *          role:
+ *            $ref: '#/components/schemas/Role'
+ */
 export async function createUser(
   prisma: PrismaClient,
   email: string,
@@ -159,20 +204,45 @@ export async function getUser(prisma: PrismaClient, userId: string) {
   } as UserType;
 }
 
+/**
+ *  @swagger
+ *  components:
+ *    schemas:
+ *      UpdateUserType:
+ *        description: Information about the user to be updated
+ *        type: object
+ *        properties:
+ *          name:
+ *            description: Name and surname of the user
+ *            type: string
+ *            pattern: '^[a-zA-Z0-9\s]{1,}$'
+ *            nullable: true
+ *            example: 'John Doe'
+ *          username:
+ *            description: Username of the user
+ *            type: string
+ *            pattern: '^[a-zA-Z0-9.]{1,}$'
+ *            nullable: true
+ *            example: 'j.doe'
+ *          imagePath:
+ *            description: Path of the user picture
+ *            type: string
+ *            pattern: '^(\b(https?|ftp|file)://)[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]$'
+ *            nullable: true
+ *            example: 'https://picture.example.com'
+ *          role:
+ *            $ref: '#/components/schemas/Role'
+ */
 export async function updateUser(
   prisma: PrismaClient,
   userId: string,
   name?: string | null,
-  email?: string,
   username?: string | null,
   imagePath?: string | null,
   role?: Role,
 ) {
   if (typeof name === 'string' && !patternNameSurname.test(name)) {
     throw new ParameterFormatError(`Parameter not correct: name ${name}`, formatErrorCode);
-  }
-  if (typeof email === 'string' && !patternEmail.test(email)) {
-    throw new ParameterFormatError(`Parameter not correct: email ${email}`, formatErrorCode);
   }
   if (typeof username === 'string' && !patternUsername.test(username)) {
     throw new ParameterFormatError(`Parameter not correct: username ${username}`, formatErrorCode);
@@ -186,7 +256,6 @@ export async function updateUser(
   const queryResult = await prisma.user.update({
     data: {
       name,
-      email,
       username,
       imagePath,
       role,

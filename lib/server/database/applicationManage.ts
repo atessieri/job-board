@@ -23,6 +23,13 @@ import type { JobType } from 'lib/server/database/jobManage';
  *      ApplicationType:
  *        description: Information about the application
  *        type: object
+ *        required:
+ *          - id
+ *          - createdAt
+ *          - updatedAt
+ *          - coverLetter
+ *          - jobId
+ *          - authorId
  *        properties:
  *          id:
  *            description: The identification of the application
@@ -70,6 +77,9 @@ export type ApplicationType = {
  *      ApplicationAuthorType:
  *        description: Information about the application and its author
  *        type: object
+ *        required:
+ *          - application
+ *          - author
  *        properties:
  *          application:
  *            $ref: '#/components/schemas/ApplicationType'
@@ -88,6 +98,9 @@ export type ApplicationAuthorType = {
  *      ApplicationJobType:
  *        description: Information about the application and the job post related
  *        type: object
+ *        required:
+ *          - application
+ *          - job
  *        properties:
  *          application:
  *            $ref: '#/components/schemas/ApplicationType'

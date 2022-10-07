@@ -11,12 +11,12 @@ import type { Session } from 'next-auth';
  *  @swagger
  *  /api/v1.0/users:
  *    get:
- *      description: Returns a list of users limited by 'take' parameter
- *                   and starting from 'cursor' parameter.
+ *      description: Return a list of users limited by 'take' parameter
+ *                   and starting from 'cursor' parameter. Only the user
+ *                   with ADMIN role can send it.
  *      parameters:
  *        - in: query
  *          name: take
- *          required: false
  *          schema:
  *            type: integer
  *            format: int32
@@ -27,7 +27,6 @@ import type { Session } from 'next-auth';
  *          example: 10
  *        - in: query
  *          name: cursor
- *          required: false
  *          schema:
  *            type: string
  *          description: The identification of the starting point element from which to start.

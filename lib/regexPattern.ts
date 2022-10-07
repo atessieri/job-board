@@ -1,6 +1,9 @@
 export const minimumTakeRecordNumber = 1;
 export const maximumTakeRecordNumber = 1000;
 
+export const minimumFakeRecordNumber = 1;
+export const maximumFakeRecordNumber = 1000;
+
 export const patternNameSurnameString = '^[a-zA-Z0-9\\s]{1,}$';
 export const patternNameSurname = new RegExp(patternNameSurnameString);
 
