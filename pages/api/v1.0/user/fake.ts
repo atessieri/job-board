@@ -56,8 +56,9 @@ function createFakeUsers(userNumber: number) {
  *  @swagger
  *  /api/v1.0/user/fake:
  *    post:
- *      description: Create fake users. Only the user
+ *      description: Create `number` fake users. Only the user
  *                   with ADMIN role can send it.
+ *      operationId: addFakeUsers
  *      parameters:
  *        - in: query
  *          name: number

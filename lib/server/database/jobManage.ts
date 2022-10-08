@@ -237,6 +237,45 @@ export async function getJobs(
   }) as JobAuthorAppCountType[];
 }
 
+/**
+ *  @swagger
+ *  components:
+ *    schemas:
+ *      CreateJobType:
+ *        description: Information about the job to be created
+ *        type: object
+ *        required:
+ *          - title
+ *          - description
+ *          - salary
+ *          - location
+ *          - published
+ *        properties:
+ *          title:
+ *            description: The title of the job post
+ *            type: string
+ *            maxLength: 80
+ *            example: 'Example title'
+ *          description:
+ *            description: The description of the job post
+ *            type: string
+ *            maxLength: 2000
+ *            example: 'Example description'
+ *          salary:
+ *            description: Salary of the job post
+ *            type: string
+ *            pattern: '^\d{1,6}(\.\d{0,3})?$'
+ *            example: '1234.122'
+ *          location:
+ *            description: Location of the job
+ *            type: string
+ *            maxLength: 80
+ *            example: 'Milan'
+ *          published:
+ *            description: True if the job post is public
+ *            type: boolean
+ *            example: true
+ */
 export async function createJob(
   prisma: PrismaClient,
   jobAuthorId: string,
@@ -351,6 +390,39 @@ export async function getJob(prisma: PrismaClient, jobId: number) {
   } as JobAppCountType;
 }
 
+/**
+ *  @swagger
+ *  components:
+ *    schemas:
+ *      UpdateJobType:
+ *        description: Information about the job to be updated
+ *        type: object
+ *        properties:
+ *          title:
+ *            description: The title of the job post
+ *            type: string
+ *            maxLength: 80
+ *            example: 'Example title'
+ *          description:
+ *            description: The description of the job post
+ *            type: string
+ *            maxLength: 2000
+ *            example: 'Example description'
+ *          salary:
+ *            description: Salary of the job post
+ *            type: string
+ *            pattern: '^\d{1,6}(\.\d{0,3})?$'
+ *            example: '1234.122'
+ *          location:
+ *            description: Location of the job
+ *            type: string
+ *            maxLength: 80
+ *            example: 'Milan'
+ *          published:
+ *            description: True if the job post is public
+ *            type: boolean
+ *            example: true
+ */
 export async function updateJob(
   prisma: PrismaClient,
   jobId: number,

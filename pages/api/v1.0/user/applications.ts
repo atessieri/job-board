@@ -15,6 +15,7 @@ import type { Session } from 'next-auth';
  *      description: Return a list of aplications related to the corrent user
  *                   limited by 'take' parameter and starting from 'cursor' parameter.
  *                   Every user with WORKER role can send it.
+ *      operationId: getApplications
  *      parameters:
  *        - in: query
  *          name: take

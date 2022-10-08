@@ -12,6 +12,8 @@ import type { Session } from 'next-auth';
  *    get:
  *      description: Return a list of job posts published limited by 'take' parameter
  *                   and starting from 'cursor' parameter. Everybody can send it.
+ *      operationId: getJobs
+ *      security: []
  *      parameters:
  *        - in: query
  *          name: take
@@ -26,9 +28,10 @@ import type { Session } from 'next-auth';
  *        - in: query
  *          name: cursor
  *          schema:
- *            type: string
+ *            type: integer
+ *            format: int32
  *          description: The identification of the starting point element from which to start.
- *          example: 'cl5kt7g1005015nbfqoos7lgs'
+ *          example: 10
  *      responses:
  *        '200':
  *          description: List of job posts published with the post author information

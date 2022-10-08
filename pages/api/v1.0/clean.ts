@@ -14,6 +14,7 @@ import type { Session } from 'next-auth';
  *    delete:
  *      description: Remove every applications, jobs and users except the current one.
  *                   Only the user with ADMIN role can send it.
+ *      operationId: getClean
  *      responses:
  *        '200':
  *          description: The operation is performed correctly

@@ -14,6 +14,7 @@ import type { Session } from 'next-auth';
  *      description: Return a list of users limited by 'take' parameter
  *                   and starting from 'cursor' parameter. Only the user
  *                   with ADMIN role can send it.
+ *      operationId: getUsers
  *      parameters:
  *        - in: query
  *          name: take

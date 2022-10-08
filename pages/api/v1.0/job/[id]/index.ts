@@ -9,6 +9,77 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import type { ApiHandlerCallback } from 'lib/server/apiHandler';
 import type { Session } from 'next-auth';
 
+/**
+ *  @swagger
+ *  /api/v1.0/job/{id}:
+ *    get:
+ *      description: Return the information about the job post
+ *                   identified by a `id`.  Everybody can send it.
+ *      operationId: getJobWithId
+ *      parameters:
+ *        - name: id
+ *          in: path
+ *          required: true
+ *          schema:
+ *            type: integer
+ *            format: int32
+ *          description: Job post identification
+ *          example: 10
+ *      responses:
+ *        '200':
+ *          description: Return the information about the job post
+ *                       identified by a `id`.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/JobType'
+ *    put:
+ *      description: Update the information of the job identified
+ *                   by a `id`. Only the user with
+ *                   COMPANY role and owner of post can send it.
+ *      operationId: updateJobWithId
+ *      parameters:
+ *        - name: id
+ *          in: path
+ *          required: true
+ *          schema:
+ *            type: integer
+ *            format: int32
+ *          description: Job post identification
+ *          example: 10
+ *      requestBody:
+ *        description: The information to update the job
+ *                     identified by a `id`.
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *               $ref: '#/components/schemas/UpdateJobType'
+ *      responses:
+ *        '200':
+ *          description: The operation is performed correctly
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/JobType'
+ *    delete:
+ *      description: Remove the information of the job identified
+ *                   by a `id`. Only the user with
+ *                   COMPANY role and owner of post can send it.
+ *      operationId: deleteJobWithId
+ *      parameters:
+ *        - name: id
+ *          in: path
+ *          required: true
+ *          schema:
+ *            type: integer
+ *            format: int32
+ *          description: Job post identification
+ *          example: 10
+ *      responses:
+ *        '200':
+ *          description: The operation is performed correctly
+ */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,
   res: NextApiResponse,

@@ -14,6 +14,7 @@ import type { Session } from 'next-auth';
  *    get:
  *      description: Return the information about the current user.
  *                   Every user can send it.
+ *      operationId: getCurrentUser
  *      responses:
  *        '200':
  *          description: Return the information about the current user
@@ -22,8 +23,9 @@ import type { Session } from 'next-auth';
  *              schema:
  *                $ref: '#/components/schemas/UserType'
  *    post:
- *      description: Create a new user. Only the user
+ *      description: Create new user. Only the user
  *                   with ADMIN role can send it.
+ *      operationId: addUser
  *      requestBody:
  *        description: The information to create a new user
  *        required: true
@@ -41,6 +43,7 @@ import type { Session } from 'next-auth';
  *    put:
  *      description: Update the information of the current user.
  *                   Every user can send it.
+ *      operationId: updateUser
  *      requestBody:
  *        description: The information to update the current user
  *        required: true

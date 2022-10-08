@@ -5,7 +5,8 @@
     "openapi": "3.0.3",
     "info": {
       "title": "Job Board API",
-      "version": "1.0",
+      "description": "This page describes the API service to publish job post and to apply to it. The administrator can manage users.",
+      "version": "1.0.0",
       "license": {
         "name": "GPLv3",
         "url": "https://www.gnu.org/licenses/gpl-3.0.html"

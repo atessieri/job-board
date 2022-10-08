@@ -7,6 +7,75 @@ import type { ApiHandlerCallback } from 'lib/server/apiHandler';
 import type { Session } from 'next-auth';
 import { Role } from '@prisma/client';
 
+/**
+ *  @swagger
+ *  /api/v1.0/user/{id}:
+ *    get:
+ *      description: Return the information about the user
+ *                   identified by a `id`. Only the user
+ *                   with ADMIN role can send it.
+ *      operationId: getUserWithId
+ *      parameters:
+ *        - name: id
+ *          in: path
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: User identification
+ *          example: 'cl5kt7g1005015nbfqoos7lgs'
+ *      responses:
+ *        '200':
+ *          description: Return the information about the user
+ *                       identified by a numeric `id`.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/UserType'
+ *    put:
+ *      description: Update the information of the user identified
+ *                   by a `id`. Only the user with
+ *                   ADMIN role can send it.
+ *      operationId: updateUserWithId
+ *      parameters:
+ *        - name: id
+ *          in: path
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: User identification
+ *          example: 'cl5kt7g1005015nbfqoos7lgs'
+ *      requestBody:
+ *        description: The information to update the user
+ *                     identified by a `id`.
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *               $ref: '#/components/schemas/UpdateUserType'
+ *      responses:
+ *        '200':
+ *          description: The operation is performed correctly
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/UserType'
+ *    delete:
+ *      description: Remove the user identified by
+ *                   a numeric `id`. Only the user
+ *                   with ADMIN role can send it.
+ *      operationId: deleteUserWithId
+ *      parameters:
+ *        - name: id
+ *          in: path
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: User identification
+ *          example: 'cl5kt7g1005015nbfqoos7lgs'
+ *      responses:
+ *        '200':
+ *          description: The operation is performed correctly
+ */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,
   res: NextApiResponse,

@@ -36,6 +36,29 @@ function createFakeJobs(companyUsers: UserType[]) {
   return jobs;
 }
 
+/**
+ *  @swagger
+ *  /api/v1.0/job/fake:
+ *    post:
+ *      description: Create fake job related to first `number` COMPANY users. Only the user
+ *                   with ADMIN role can send it.
+ *      operationId: addFakeJobs
+ *      parameters:
+ *        - in: query
+ *          name: number
+ *          required: true
+ *          schema:
+ *            type: integer
+ *            format: int32
+ *            minimum: 1
+ *            maximum: 1000
+ *            default: 10
+ *          description: Number of fake records to be created.
+ *          example: 10
+ *      responses:
+ *        '201':
+ *          description: The operation is performed correctly
+ */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,
   res: NextApiResponse,

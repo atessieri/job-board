@@ -9,6 +9,28 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import type { ApiHandlerCallback } from 'lib/server/apiHandler';
 import type { Session } from 'next-auth';
 
+/**
+ *  @swagger
+ *  /api/v1.0/job:
+ *    post:
+ *      description: Create new job post. Only the user
+ *                   with COMPANY role can send it.
+ *      operationId: addJobPost
+ *      requestBody:
+ *        description: The information to create new job post
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *               $ref: '#/components/schemas/CreateJobType'
+ *      responses:
+ *        '200':
+ *          description: The operation is performed correctly
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/JobType'
+ */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,
   res: NextApiResponse,

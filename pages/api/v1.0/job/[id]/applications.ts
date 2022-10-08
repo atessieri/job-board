@@ -10,6 +10,52 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import type { ApiHandlerCallback } from 'lib/server/apiHandler';
 import type { Session } from 'next-auth';
 
+/**
+ *  @swagger
+ *  /api/v1.0/job/{id}/applications:
+ *    get:
+ *      description: Return the information about the applications related to the job post
+ *                   identified by a `id` limited by 'take' parameter and starting
+ *                   from 'cursor' parameter. Only the user with
+ *                   COMPANY role and owner of post can send it.
+ *      operationId: getApplicationsJobWithId
+ *      parameters:
+ *        - name: id
+ *          in: path
+ *          required: true
+ *          schema:
+ *            type: integer
+ *            format: int32
+ *          description: Job post identification
+ *          example: 10
+ *        - in: query
+ *          name: take
+ *          schema:
+ *            type: integer
+ *            format: int32
+ *            minimum: 1
+ *            maximum: 1000
+ *            default: 10
+ *          description: Number of records to be received.
+ *          example: 10
+ *        - in: query
+ *          name: cursor
+ *          schema:
+ *            type: integer
+ *            format: int32
+ *          description: The identification of the starting point element from which to start.
+ *          example: 10
+ *      responses:
+ *        '200':
+ *          description: Return the information about the applications related to the job post
+ *                       identified by a `id`.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/ApplicationAuthorType'
+ */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,
   res: NextApiResponse,

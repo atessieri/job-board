@@ -9,6 +9,55 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import type { ApiHandlerCallback } from 'lib/server/apiHandler';
 import type { Session } from 'next-auth';
 
+/**
+ *  @swagger
+ *  /api/v1.0/user/{id}/jobs:
+ *    get:
+ *      description: Return a list of job posts published by the user
+ *                   identified by an `id` limited by the 'take' parameter
+ *                   and starting from the 'cursor' parameter. If the `id`
+ *                   is the same as the current user id and it is a
+ *                   COMPANY as the role the job posts returned are published
+ *                   and private. Everybody can send it.
+ *      operationId: getJobsWithId
+ *      security: []
+ *      parameters:
+ *        - name: id
+ *          in: path
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: User identification
+ *          example: 'cl5kt7g1005015nbfqoos7lgs'
+ *        - in: query
+ *          name: take
+ *          schema:
+ *            type: integer
+ *            format: int32
+ *            minimum: 1
+ *            maximum: 1000
+ *            default: 10
+ *            example: 10
+ *          description: Number of records to be received.
+ *          example: 10
+ *        - in: query
+ *          name: cursor
+ *          schema:
+ *            type: integer
+ *            format: int32
+ *          description: The identification of the starting point element from which to start.
+ *          example: 10
+ *      responses:
+ *        '200':
+ *          description: List of job posts published with the post author information
+ *                       and the application counter
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/JobAuthorAppCountType'
+ */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,
   res: NextApiResponse,
@@ -32,7 +81,7 @@ const callbackHandler: ApiHandlerCallback = async (
       typeof req.query.onlyPublished === 'undefined' ||
       typeof req.query.onlyPublished === 'string'
     ) {
-      onlyPublished = req.query.onlyPublished;
+      onlyPublished = 'false';
     } else {
       throw new ParameterFormatError(
         `Parameter not correct: onlyPublished ${req.query.onlyPublished}`,
