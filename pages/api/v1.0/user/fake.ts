@@ -10,6 +10,12 @@ import {
 import { maximumFakeRecordNumber, minimumFakeRecordNumber } from 'lib/regexPattern';
 import { faker } from '@faker-js/faker';
 import { Role } from '@prisma/client';
+import {
+  HttpError,
+  metodNotAllowedErrorCode,
+  metodNotImplementedErrorCode,
+  noLoggedInErrorCode,
+} from 'lib/exceptions/HttpError';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { ApiHandlerCallback } from 'lib/server/apiHandler';
@@ -81,11 +87,11 @@ const callbackHandler: ApiHandlerCallback = async (
   session: Session | null,
 ) => {
   if (!session) {
-    return res.status(401).json({ message: 'Not logged in' });
+    throw new HttpError('Not logged in', noLoggedInErrorCode, 401);
   }
   const user = await getUser(prisma, session.user.id);
   if (typeof user === 'undefined' || user.role !== Role.ADMIN) {
-    return res.status(405).json({ message: 'Metod not allowed' });
+    throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
   }
   switch (req.method) {
     case 'POST': {
@@ -107,7 +113,7 @@ const callbackHandler: ApiHandlerCallback = async (
       return;
     }
   }
-  return res.status(501).json({ message: 'Metod not implemented' });
+  throw new HttpError('Metod not implemented', metodNotImplementedErrorCode, 501);
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

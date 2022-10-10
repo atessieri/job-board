@@ -4,6 +4,12 @@ import apiHandler from 'lib/server/apiHandler';
 import { formatErrorCode, ParameterFormatError } from 'lib/exceptions/ParameterFormatError';
 import { Role } from '@prisma/client';
 import { deleteJob, getJob, updateJob } from 'lib/server/database/jobManage';
+import {
+  HttpError,
+  metodNotAllowedErrorCode,
+  metodNotImplementedErrorCode,
+  noLoggedInErrorCode,
+} from 'lib/exceptions/HttpError';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { ApiHandlerCallback } from 'lib/server/apiHandler';
@@ -95,7 +101,7 @@ const callbackHandler: ApiHandlerCallback = async (
     }
     case 'PUT': {
       if (!session) {
-        return res.status(401).json({ message: 'Not logged in' });
+        throw new HttpError('Not logged in', noLoggedInErrorCode, 401);
       }
       const [user, job] = await Promise.all([
         getUser(prisma, session.user.id),
@@ -107,7 +113,7 @@ const callbackHandler: ApiHandlerCallback = async (
         typeof job === 'undefined' ||
         session.user.id !== job.job.authorId
       ) {
-        return res.status(405).json({ message: 'Metod not allowed' });
+        throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
       }
       const jobUpdated = await updateJob(
         prisma,
@@ -122,7 +128,7 @@ const callbackHandler: ApiHandlerCallback = async (
     }
     case 'DELETE': {
       if (!session) {
-        return res.status(401).json({ message: 'Not logged in' });
+        throw new HttpError('Not logged in', noLoggedInErrorCode, 401);
       }
       const [user, job] = await Promise.all([
         getUser(prisma, session.user.id),
@@ -134,14 +140,14 @@ const callbackHandler: ApiHandlerCallback = async (
         typeof job === 'undefined' ||
         session.user.id !== job.job.authorId
       ) {
-        return res.status(405).json({ message: 'Metod not allowed' });
+        throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
       }
       await deleteJob(prisma, parseInt(req.query.id));
       res.status(200).end();
       return;
     }
   }
-  return res.status(501).json({ message: 'Metod not implemented' });
+  throw new HttpError('Metod not implemented', metodNotImplementedErrorCode, 501);
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

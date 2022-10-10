@@ -245,6 +245,28 @@ export async function getAuthorApplications(
   }) as ApplicationJobType[];
 }
 
+/**
+ *  @swagger
+ *  components:
+ *    schemas:
+ *      CreateApplicationType:
+ *        description: Information about the application to be created
+ *        type: object
+ *        required:
+ *          - coverLetter
+ *          - jobId
+ *        properties:
+ *          coverLetter:
+ *            description: The cover letter of the application
+ *            type: string
+ *            maxLength: 1000
+ *            example: 'Example cover letter'
+ *          jobId:
+ *            description: The identification of the job post
+ *            type: integer
+ *            format: int32
+ *            example: 10
+ */
 export async function createApplication(
   prisma: PrismaClient,
   coverLetter: string,
@@ -312,6 +334,20 @@ export async function getApplication(prisma: PrismaClient, applicationId: number
   } as ApplicationType;
 }
 
+/**
+ *  @swagger
+ *  components:
+ *    schemas:
+ *      UpdateApplicationType:
+ *        description: Information about the application to be updated
+ *        type: object
+ *        properties:
+ *          coverLetter:
+ *            description: The cover letter of the application
+ *            type: string
+ *            maxLength: 1000
+ *            example: 'Example cover letter'
+ */
 export async function updateApplication(
   prisma: PrismaClient,
   applicationId: number,

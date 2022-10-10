@@ -4,6 +4,7 @@ import { getUser } from 'lib/server/database/userManage';
 import { getJobs } from 'lib/server/database/jobManage';
 import { formatErrorCode, ParameterFormatError } from 'lib/exceptions/ParameterFormatError';
 import { Role } from '@prisma/client';
+import { HttpError, metodNotImplementedErrorCode } from 'lib/exceptions/HttpError';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { ApiHandlerCallback } from 'lib/server/apiHandler';
@@ -101,7 +102,7 @@ const callbackHandler: ApiHandlerCallback = async (
       return res.status(200).json(jobs);
     }
   }
-  return res.status(501).json({ message: 'Metod not implemented' });
+  throw new HttpError('Metod not implemented', metodNotImplementedErrorCode, 501);
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

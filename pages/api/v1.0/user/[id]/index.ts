@@ -1,11 +1,18 @@
 import prisma from 'lib/server/database/prisma';
 import { deleteUser, getUser, updateUser } from 'lib/server/database/userManage';
 import apiHandler from 'lib/server/apiHandler';
+import {
+  HttpError,
+  metodNotAllowedErrorCode,
+  metodNotImplementedErrorCode,
+  noLoggedInErrorCode,
+} from 'lib/exceptions/HttpError';
+import { Role } from '@prisma/client';
+import { formatErrorCode, ParameterFormatError } from 'lib/exceptions/ParameterFormatError';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { ApiHandlerCallback } from 'lib/server/apiHandler';
 import type { Session } from 'next-auth';
-import { Role } from '@prisma/client';
 
 /**
  *  @swagger
@@ -82,20 +89,23 @@ const callbackHandler: ApiHandlerCallback = async (
   session: Session | null,
 ) => {
   if (!session) {
-    return res.status(401).json({ message: 'Not logged in' });
+    throw new HttpError('Not logged in', noLoggedInErrorCode, 401);
   }
   const userSession = await getUser(prisma, session.user.id);
   if (typeof userSession === 'undefined' || userSession.role !== Role.ADMIN) {
-    return res.status(405).json({ message: 'Metod not allowed' });
+    throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
   }
   if (typeof req.query.id !== 'string') {
-    return res.status(400).json({ message: 'Parameter format error' });
+    throw new ParameterFormatError(
+      `Parameter not correct: userId ${req.query.id}`,
+      formatErrorCode,
+    );
   }
   switch (req.method) {
     case 'GET': {
       const user = await getUser(prisma, req.query.id);
       if (typeof user === 'undefined') {
-        return res.status(400).json({ message: 'User not found' });
+        throw new HttpError('User not found', noLoggedInErrorCode, 401);
       }
       return res.status(200).json(user);
     }
@@ -116,7 +126,7 @@ const callbackHandler: ApiHandlerCallback = async (
       return;
     }
   }
-  return res.status(501).json({ message: 'Metod not implemented' });
+  throw new HttpError('Metod not implemented', metodNotImplementedErrorCode, 501);
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

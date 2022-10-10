@@ -7,6 +7,12 @@ import { Role } from '@prisma/client';
 import { appCoverLetterMaxSize } from 'lib/regexPattern';
 import { getJobs, JobAuthorAppCountType } from 'lib/server/database/jobManage';
 import { createApplication } from 'lib/server/database/applicationManage';
+import {
+  HttpError,
+  metodNotAllowedErrorCode,
+  metodNotImplementedErrorCode,
+  noLoggedInErrorCode,
+} from 'lib/exceptions/HttpError';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { ApiHandlerCallback } from 'lib/server/apiHandler';
@@ -31,17 +37,39 @@ function createFakeApplications(workerUsers: UserType[], jobs: JobAuthorAppCount
   return applications;
 }
 
+/**
+ *  @swagger
+ *  /api/v1.0/application:
+ *    post:
+ *      description: Create new fake applications related to related to first
+ *                   `number` WORKER users and first `number` job posts.
+ *      operationId: addApplication
+ *      requestBody:
+ *        description: The information to create new application
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *               $ref: '#/components/schemas/CreateApplicationType'
+ *      responses:
+ *        '200':
+ *          description: The operation is performed correctly
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApplicationType'
+ */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,
   res: NextApiResponse,
   session: Session | null,
 ) => {
   if (!session) {
-    return res.status(401).json({ message: 'Not logged in' });
+    throw new HttpError('Not logged in', noLoggedInErrorCode, 401);
   }
   const user = await getUser(prisma, session.user.id);
   if (typeof user === 'undefined' || user.role !== Role.ADMIN) {
-    return res.status(405).json({ message: 'Metod not allowed' });
+    throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
   }
   switch (req.method) {
     case 'POST': {
@@ -72,7 +100,7 @@ const callbackHandler: ApiHandlerCallback = async (
       return;
     }
   }
-  return res.status(501).json({ message: 'Metod not implemented' });
+  throw new HttpError('Metod not implemented', metodNotImplementedErrorCode, 501);
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
