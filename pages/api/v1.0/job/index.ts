@@ -22,6 +22,8 @@ import type { Session } from 'next-auth';
  *      description: Create new job post. Only the user
  *                   with COMPANY role can send it.
  *      operationId: addJobPost
+ *      tags:
+ *        - Job post management
  *      requestBody:
  *        description: The information to create new job post
  *        required: true
@@ -36,6 +38,36 @@ import type { Session } from 'next-auth';
  *            application/json:
  *              schema:
  *                $ref: '#/components/schemas/JobType'
+ *        '400':
+ *          description: The parameter error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '401':
+ *          description: No any login has been performed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '405':
+ *          description: The function cannot be used with current access rights
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,

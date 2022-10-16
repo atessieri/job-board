@@ -22,6 +22,8 @@ import type { Session } from 'next-auth';
  *                   and private. Everybody can send it.
  *      operationId: getJobsWithId
  *      security: []
+ *      tags:
+ *        - Job post management
  *      parameters:
  *        - name: id
  *          in: path
@@ -58,6 +60,24 @@ import type { Session } from 'next-auth';
  *                type: array
  *                items:
  *                  $ref: '#/components/schemas/JobAuthorAppCountType'
+ *        '400':
+ *          description: The parameter error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,

@@ -15,6 +15,8 @@ import type { Session } from 'next-auth';
  *                   and starting from 'cursor' parameter. Everybody can send it.
  *      operationId: getJobs
  *      security: []
+ *      tags:
+ *        - Job post management
  *      parameters:
  *        - in: query
  *          name: take
@@ -43,6 +45,24 @@ import type { Session } from 'next-auth';
  *                type: array
  *                items:
  *                  $ref: '#/components/schemas/JobAuthorAppCountType'
+ *        '400':
+ *          description: The parameter error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,

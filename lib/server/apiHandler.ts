@@ -14,9 +14,49 @@ export type ApiHandlerCallback = (
   session: Session | null,
 ) => Promise<void>;
 
+/**
+ *  @swagger
+ *  components:
+ *    schemas:
+ *      ApiErrorReply:
+ *        description: Information about the error of a API function
+ *        type: object
+ *        required:
+ *          - message
+ *          - name
+ *        properties:
+ *          message:
+ *            description: The description of the error
+ *            type: string
+ *            example: 'Metod not allowed'
+ *          name:
+ *            description: The identification of the class of error
+ *            type: string
+ *            example: 'HttpError'
+ *          errorCode:
+ *            description: >
+ *              The code of the error:
+ *                * `PHE0001` - No any login has been performed
+ *                * `PHE0002` - The function cannot be used with current access rights
+ *                * `PHE0003` - The function isn't implemented
+ *                * `PFE0001` - Format error of a parameter
+ *                * `PFE0002` - Size error of a parameter
+ *                * `PFE0003` - The value of a parameter is less than the minumum one
+ *                * `PFE0004` - The value of a parameter is greater than the maximum one
+ *            type: string
+ *            enum:
+ *              - PHE0001
+ *              - PHE0002
+ *              - PHE0003
+ *              - PFE0001
+ *              - PFE0002
+ *              - PFE0003
+ *              - PFE0004
+ *            example: 'PHE0001'
+ */
 type ApiErrorReply = {
   message: string;
-  name?: string;
+  name: string;
   errorCode?: string;
 };
 

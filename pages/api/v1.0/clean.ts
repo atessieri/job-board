@@ -21,9 +21,35 @@ import type { Session } from 'next-auth';
  *      description: Remove every applications, jobs and users except the current one.
  *                   Only the user with ADMIN role can send it.
  *      operationId: getClean
+ *      tags:
+ *        - Data management
  *      responses:
  *        '200':
  *          description: The operation is performed correctly
+ *        '401':
+ *          description: No any login has been performed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '405':
+ *          description: The function cannot be used with current access rights
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,

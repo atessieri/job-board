@@ -22,6 +22,9 @@ import type { Session } from 'next-auth';
  *      description: Return the information about the job post
  *                   identified by a `id`.  Everybody can send it.
  *      operationId: getJobWithId
+ *      security: []
+ *      tags:
+ *        - Job post management
  *      parameters:
  *        - name: id
  *          in: path
@@ -39,11 +42,31 @@ import type { Session } from 'next-auth';
  *            application/json:
  *              schema:
  *                $ref: '#/components/schemas/JobType'
+ *        '400':
+ *          description: The parameter error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  *    put:
  *      description: Update the information of the job identified
  *                   by a `id`. Only the user with
  *                   COMPANY role and owner of post can send it.
  *      operationId: updateJobWithId
+ *      tags:
+ *        - Job post management
  *      parameters:
  *        - name: id
  *          in: path
@@ -61,6 +84,7 @@ import type { Session } from 'next-auth';
  *          application/json:
  *            schema:
  *               $ref: '#/components/schemas/UpdateJobType'
+
  *      responses:
  *        '200':
  *          description: The operation is performed correctly
@@ -68,11 +92,43 @@ import type { Session } from 'next-auth';
  *            application/json:
  *              schema:
  *                $ref: '#/components/schemas/JobType'
+ *        '400':
+ *          description: The parameter error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '401':
+ *          description: No any login has been performed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '405':
+ *          description: The function cannot be used with current access rights
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  *    delete:
  *      description: Remove the information of the job identified
  *                   by a `id`. Only the user with
  *                   COMPANY role and owner of post can send it.
  *      operationId: deleteJobWithId
+ *      tags:
+ *        - Job post management
  *      parameters:
  *        - name: id
  *          in: path
@@ -85,6 +141,36 @@ import type { Session } from 'next-auth';
  *      responses:
  *        '200':
  *          description: The operation is performed correctly
+ *        '400':
+ *          description: The parameter error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '401':
+ *          description: No any login has been performed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '405':
+ *          description: The function cannot be used with current access rights
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,

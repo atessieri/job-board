@@ -21,6 +21,8 @@ import type { Session } from 'next-auth';
  *      description: Return the information about the current user.
  *                   Every user can send it.
  *      operationId: getCurrentUser
+ *      tags:
+ *        - User management
  *      responses:
  *        '200':
  *          description: Return the information about the current user
@@ -28,10 +30,30 @@ import type { Session } from 'next-auth';
  *            application/json:
  *              schema:
  *                $ref: '#/components/schemas/UserType'
+ *        '401':
+ *          description: No any login has been performed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  *    post:
  *      description: Create new user. Only the user
  *                   with ADMIN role can send it.
  *      operationId: addUser
+ *      tags:
+ *        - User management
  *      requestBody:
  *        description: The information to create a new user
  *        required: true
@@ -46,10 +68,42 @@ import type { Session } from 'next-auth';
  *            application/json:
  *              schema:
  *                $ref: '#/components/schemas/UserType'
+ *        '400':
+ *          description: The parameter error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '401':
+ *          description: No any login has been performed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '405':
+ *          description: The function cannot be used with current access rights
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  *    put:
  *      description: Update the information of the current user.
  *                   Every user can send it.
  *      operationId: updateUser
+ *      tags:
+ *        - User management
  *      requestBody:
  *        description: The information to update the current user
  *        required: true
@@ -64,6 +118,30 @@ import type { Session } from 'next-auth';
  *            application/json:
  *              schema:
  *                $ref: '#/components/schemas/UserType'
+ *        '400':
+ *          description: The parameter error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '401':
+ *          description: No any login has been performed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,

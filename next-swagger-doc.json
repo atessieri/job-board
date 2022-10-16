@@ -32,6 +32,24 @@
         "csrf-token": [],
         "callback-url": []
       }
+    ],
+    "tags": [
+      {
+        "name": "User management",
+        "description": "API to manage users"
+      },
+      {
+        "name": "Job post management",
+        "description": "API to manage job posts"
+      },
+      {
+        "name": "Application management",
+        "description": "API to manage applications"
+      },
+      {
+        "name": "Data management",
+        "description": "API to manage data stored"
+      }
     ]
   }
 }

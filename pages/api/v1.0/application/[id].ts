@@ -28,6 +28,8 @@ import type { Session } from 'next-auth';
  *                   identified by a `id`. Only the WORKER applied or
  *                   the COMPANY published the jop post.
  *      operationId: getApplicationithId
+ *      tags:
+ *        - Application management
  *      parameters:
  *        - name: id
  *          in: path
@@ -45,10 +47,42 @@ import type { Session } from 'next-auth';
  *            application/json:
  *              schema:
  *                $ref: '#/components/schemas/ApplicationType'
+ *        '400':
+ *          description: The parameter error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '401':
+ *          description: No any login has been performed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '405':
+ *          description: The function cannot be used with current access rights
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  *    put:
  *      description: Update the information of the application identified
  *                   by a `id`. Only the WORKER applied can send it.
  *      operationId: updateApplicationWithId
+ *      tags:
+ *        - Application management
  *      parameters:
  *        - name: id
  *          in: path
@@ -73,10 +107,42 @@ import type { Session } from 'next-auth';
  *            application/json:
  *              schema:
  *                $ref: '#/components/schemas/ApplicationType'
+ *        '400':
+ *          description: The parameter error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '401':
+ *          description: No any login has been performed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '405':
+ *          description: The function cannot be used with current access rights
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  *    delete:
  *      description: Remove the application identified
  *                   by a `id`. Only the WORKER applied can send it.
  *      operationId: deleteApplicationWithId
+ *      tags:
+ *        - Application management
  *      parameters:
  *        - name: id
  *          in: path
@@ -89,6 +155,36 @@ import type { Session } from 'next-auth';
  *      responses:
  *        '200':
  *          description: The operation is performed correctly
+ *        '400':
+ *          description: The parameter error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '401':
+ *          description: No any login has been performed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '405':
+ *          description: The function cannot be used with current access rights
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,

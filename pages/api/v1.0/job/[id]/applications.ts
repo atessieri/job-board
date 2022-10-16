@@ -25,6 +25,8 @@ import type { Session } from 'next-auth';
  *                   from 'cursor' parameter. Only the user with
  *                   COMPANY role and owner of post can send it.
  *      operationId: getApplicationsJobWithId
+ *      tags:
+ *        - Application management
  *      parameters:
  *        - name: id
  *          in: path
@@ -61,6 +63,36 @@ import type { Session } from 'next-auth';
  *                type: array
  *                items:
  *                  $ref: '#/components/schemas/ApplicationAuthorType'
+ *        '400':
+ *          description: The parameter error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '401':
+ *          description: No any login has been performed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '405':
+ *          description: The function cannot be used with current access rights
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,

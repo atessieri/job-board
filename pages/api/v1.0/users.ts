@@ -21,6 +21,8 @@ import type { Session } from 'next-auth';
  *                   and starting from 'cursor' parameter. Only the user
  *                   with ADMIN role can send it.
  *      operationId: getUsers
+ *      tags:
+ *        - User management
  *      parameters:
  *        - in: query
  *          name: take
@@ -47,6 +49,36 @@ import type { Session } from 'next-auth';
  *                type: array
  *                items:
  *                  $ref: '#/components/schemas/UserType'
+ *        '400':
+ *          description: The parameter error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '401':
+ *          description: No any login has been performed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '405':
+ *          description: The function cannot be used with current access rights
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '500':
+ *          description: Internal error
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
+ *        '501':
+ *          description: The function isn't implemented
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/ApiErrorReply'
  */
 const callbackHandler: ApiHandlerCallback = async (
   req: NextApiRequest,
