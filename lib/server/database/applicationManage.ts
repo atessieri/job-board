@@ -8,6 +8,7 @@ import {
 } from 'lib/exceptions/ParameterFormatError';
 import {
   appCoverLetterMaxSize,
+  appCoverLetterMinSize,
   maximumTakeRecordNumber,
   minimumTakeRecordNumber,
   patternAppCoverLetter,
@@ -49,6 +50,8 @@ import type { JobType } from 'lib/server/database/jobManage';
  *          coverLetter:
  *            description: The cover letter of the application
  *            type: string
+ *            pattern: '^[\s\w\d\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]{1,1000}$'
+ *            minLength: 1
  *            maxLength: 1000
  *            example: 'Example cover letter'
  *          jobId:
@@ -259,6 +262,8 @@ export async function getAuthorApplications(
  *          coverLetter:
  *            description: The cover letter of the application
  *            type: string
+ *            pattern: '^[\s\w\d\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]{1,1000}$'
+ *            minLength: 1
  *            maxLength: 1000
  *            example: 'Example cover letter'
  *          jobId:
@@ -276,6 +281,12 @@ export async function createApplication(
   if (coverLetter.length > appCoverLetterMaxSize) {
     throw new ParameterFormatError(
       `Parameter not correct: coverLetter size ${coverLetter.length} too long`,
+      sizeErrorCode,
+    );
+  }
+  if (coverLetter.length < appCoverLetterMinSize) {
+    throw new ParameterFormatError(
+      `Parameter not correct: coverLetter size ${coverLetter.length} too short`,
       sizeErrorCode,
     );
   }
@@ -345,6 +356,8 @@ export async function getApplication(prisma: PrismaClient, applicationId: number
  *          coverLetter:
  *            description: The cover letter of the application
  *            type: string
+ *            pattern: '^[\s\w\d\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]{1,1000}$'
+ *            minLength: 1
  *            maxLength: 1000
  *            example: 'Example cover letter'
  */
@@ -363,6 +376,12 @@ export async function updateApplication(
     if (coverLetter.length > appCoverLetterMaxSize) {
       throw new ParameterFormatError(
         `Parameter not correct: coverLetter size ${coverLetter.length} too long`,
+        sizeErrorCode,
+      );
+    }
+    if (coverLetter.length < appCoverLetterMinSize) {
+      throw new ParameterFormatError(
+        `Parameter not correct: coverLetter size ${coverLetter.length} too short`,
         sizeErrorCode,
       );
     }

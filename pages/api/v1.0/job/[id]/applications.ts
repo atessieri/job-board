@@ -132,5 +132,5 @@ const callbackHandler: ApiHandlerCallback = async (
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  return apiHandler(req, res, callbackHandler);
+  return await apiHandler(req, res, callbackHandler);
 }

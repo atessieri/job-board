@@ -107,7 +107,7 @@ const callbackHandler: ApiHandlerCallback = async (
           formatErrorCode,
         );
       }
-      const job = createJob(
+      const job = await createJob(
         prisma,
         session.user.id,
         req.body.title,
@@ -123,5 +123,5 @@ const callbackHandler: ApiHandlerCallback = async (
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  return apiHandler(req, res, callbackHandler);
+  return await apiHandler(req, res, callbackHandler);
 }

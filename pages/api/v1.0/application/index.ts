@@ -95,7 +95,7 @@ const callbackHandler: ApiHandlerCallback = async (
           formatErrorCode,
         );
       }
-      const application = createApplication(
+      const application = await createApplication(
         prisma,
         req.body.coverLetter,
         req.body.jobId,
@@ -108,5 +108,5 @@ const callbackHandler: ApiHandlerCallback = async (
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  return apiHandler(req, res, callbackHandler);
+  return await apiHandler(req, res, callbackHandler);
 }

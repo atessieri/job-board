@@ -41,7 +41,7 @@ import type { Session } from 'next-auth';
  *          content:
  *            application/json:
  *              schema:
- *                $ref: '#/components/schemas/JobType'
+ *                $ref: '#/components/schemas/JobAppCountType'
  *        '400':
  *          description: The parameter error
  *          content:
@@ -182,7 +182,7 @@ const callbackHandler: ApiHandlerCallback = async (
   }
   switch (req.method) {
     case 'GET': {
-      const job = getJob(prisma, parseInt(req.query.id));
+      const job = await getJob(prisma, parseInt(req.query.id));
       return res.status(200).json(job);
     }
     case 'PUT': {
@@ -237,5 +237,5 @@ const callbackHandler: ApiHandlerCallback = async (
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  return apiHandler(req, res, callbackHandler);
+  return await apiHandler(req, res, callbackHandler);
 }

@@ -17,6 +17,9 @@ import {
   jobLocationMaxSize,
   minimumTakeRecordNumber,
   maximumTakeRecordNumber,
+  jobTitleMinSize,
+  jobDescriptionMinSize,
+  jobLocationMinSize,
 } from 'lib/regexPattern';
 
 import type { UserType } from 'lib/server/database/userManage';
@@ -57,11 +60,15 @@ import type { UserType } from 'lib/server/database/userManage';
  *          title:
  *            description: The title of the job post
  *            type: string
+ *            pattern: '^[\s\w\d\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]{1,80}$'
+ *            minLength: 1
  *            maxLength: 80
  *            example: 'Example title'
  *          description:
  *            description: The description of the job post
  *            type: string
+ *            pattern: '^[\s\w\d\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]{1,2000}$'
+ *            minLength: 1
  *            maxLength: 2000
  *            example: 'Example description'
  *          salary:
@@ -72,6 +79,8 @@ import type { UserType } from 'lib/server/database/userManage';
  *          location:
  *            description: Location of the job
  *            type: string
+ *            pattern: '^[\s\w\d\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]{1,80}$'
+ *            minLength: 1
  *            maxLength: 80
  *            example: 'Milan'
  *          published:
@@ -254,21 +263,27 @@ export async function getJobs(
  *          title:
  *            description: The title of the job post
  *            type: string
+ *            pattern: '^[\s\w\d\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]{1,80}$'
+ *            minLength: 1
  *            maxLength: 80
  *            example: 'Example title'
  *          description:
  *            description: The description of the job post
  *            type: string
+ *            pattern: '^[\s\w\d\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]{1,2000}$'
+ *            minLength: 1
  *            maxLength: 2000
  *            example: 'Example description'
  *          salary:
  *            description: Salary of the job post
  *            type: string
- *            pattern: '^\d{1,6}(\.\d{0,3})?$'
+ *            pattern: '^[\s\w\d\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]{1,80}$'
  *            example: '1234.122'
  *          location:
  *            description: Location of the job
  *            type: string
+ *            pattern: '^[\s\w\d\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]{1,2000}$'
+ *            minLength: 1
  *            maxLength: 80
  *            example: 'Milan'
  *          published:
@@ -291,12 +306,24 @@ export async function createJob(
       sizeErrorCode,
     );
   }
+  if (title.length < jobTitleMinSize) {
+    throw new ParameterFormatError(
+      `Parameter not correct: title size ${title.length} too short`,
+      sizeErrorCode,
+    );
+  }
   if (!patternJobTitle.test(title)) {
     throw new ParameterFormatError(`Parameter not correct: title ${title}`, formatErrorCode);
   }
   if (description.length > jobDescriptionMaxSize) {
     throw new ParameterFormatError(
       `Parameter not correct: description ${description.length} too long`,
+      sizeErrorCode,
+    );
+  }
+  if (description.length < jobDescriptionMinSize) {
+    throw new ParameterFormatError(
+      `Parameter not correct: description ${description.length} too short`,
       sizeErrorCode,
     );
   }
@@ -315,11 +342,14 @@ export async function createJob(
       sizeErrorCode,
     );
   }
-  if (!patternJobLocation.test(location)) {
+  if (location.length < jobLocationMinSize) {
     throw new ParameterFormatError(
-      `Parameter not correct: location ${location} too long`,
-      formatErrorCode,
+      `Parameter not correct: location size ${location.length} too short`,
+      sizeErrorCode,
     );
+  }
+  if (!patternJobLocation.test(location)) {
+    throw new ParameterFormatError(`Parameter not correct: location ${location}`, formatErrorCode);
   }
   let published: boolean;
   if (typeof onlyPublished === 'undefined' || onlyPublished == 'false') {
@@ -401,11 +431,15 @@ export async function getJob(prisma: PrismaClient, jobId: number) {
  *          title:
  *            description: The title of the job post
  *            type: string
+ *            pattern: '^[\s\w\d\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]{1,80}$'
+ *            minLength: 1
  *            maxLength: 80
  *            example: 'Example title'
  *          description:
  *            description: The description of the job post
  *            type: string
+ *            pattern: '^[\s\w\d\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]{1,2000}$'
+ *            minLength: 1
  *            maxLength: 2000
  *            example: 'Example description'
  *          salary:
@@ -416,6 +450,8 @@ export async function getJob(prisma: PrismaClient, jobId: number) {
  *          location:
  *            description: Location of the job
  *            type: string
+ *            pattern: '^[\s\w\d\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]{1,80}$'
+ *            minLength: 1
  *            maxLength: 80
  *            example: 'Milan'
  *          published:
@@ -442,6 +478,12 @@ export async function updateJob(
         sizeErrorCode,
       );
     }
+    if (title.length < jobTitleMinSize) {
+      throw new ParameterFormatError(
+        `Parameter not correct: title size ${title.length} too short`,
+        sizeErrorCode,
+      );
+    }
     if (!patternJobTitle.test(title)) {
       throw new ParameterFormatError(`Parameter not correct: title ${title}`, formatErrorCode);
     }
@@ -450,6 +492,12 @@ export async function updateJob(
     if (description.length > jobDescriptionMaxSize) {
       throw new ParameterFormatError(
         `Parameter not correct: description ${description.length} too long`,
+        sizeErrorCode,
+      );
+    }
+    if (description.length < jobDescriptionMinSize) {
+      throw new ParameterFormatError(
+        `Parameter not correct: description ${description.length} too short`,
         sizeErrorCode,
       );
     }
@@ -467,6 +515,12 @@ export async function updateJob(
     if (location.length > jobLocationMaxSize) {
       throw new ParameterFormatError(
         `Parameter not correct: location size ${location.length} too long`,
+        sizeErrorCode,
+      );
+    }
+    if (location.length < jobLocationMinSize) {
+      throw new ParameterFormatError(
+        `Parameter not correct: location size ${location.length} too short`,
         sizeErrorCode,
       );
     }

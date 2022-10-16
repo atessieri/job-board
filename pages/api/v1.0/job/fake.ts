@@ -51,21 +51,37 @@ function createFakeJobs(companyUsers: UserType[]) {
  *      operationId: addFakeJobs
  *      tags:
  *        - Data management
- *      parameters:
- *        - in: query
- *          name: number
- *          required: true
- *          schema:
- *            type: integer
- *            format: int32
- *            minimum: 1
- *            maximum: 1000
- *            default: 10
- *          description: Number of fake records to be created.
- *          example: 10
+ *      requestBody:
+ *        description: Number of fake records to be created.
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              required:
+ *                - number
+ *              properties:
+ *                number:
+ *                  type: integer
+ *                  format: int32
+ *                  minimum: 1
+ *                  maximum: 1000
+ *                  default: 10
+ *                  example: 10
  *      responses:
  *        '201':
  *          description: The operation is performed correctly
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                required:
+ *                  - number
+ *                properties:
+ *                  number:
+ *                    type: integer
+ *                    format: int32
+ *                    example: 10
  *        '400':
  *          description: The parameter error
  *          content:
@@ -111,13 +127,13 @@ const callbackHandler: ApiHandlerCallback = async (
   }
   switch (req.method) {
     case 'POST': {
-      if (typeof req.body.number !== 'string') {
+      if (typeof req.body.number !== 'number') {
         throw new ParameterFormatError(
           `Parameter not correct: number ${req.body.number}`,
           formatErrorCode,
         );
       }
-      const companyUsers = await getUsersRole(prisma, Role.COMPANY, parseInt(req.body.number));
+      const companyUsers = await getUsersRole(prisma, Role.COMPANY, req.body.number);
       const jobs = createFakeJobs(companyUsers);
       if (jobs.length > 0) {
         await Promise.all(
@@ -134,13 +150,14 @@ const callbackHandler: ApiHandlerCallback = async (
           ),
         );
       }
-      res.status(201).end();
-      return;
+      return res.status(201).json({
+        number: jobs.length,
+      });
     }
   }
   throw new HttpError('Metod not implemented', metodNotImplementedErrorCode, 501);
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  return apiHandler(req, res, callbackHandler);
+  return await apiHandler(req, res, callbackHandler);
 }

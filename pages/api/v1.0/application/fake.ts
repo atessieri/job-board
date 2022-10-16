@@ -28,11 +28,13 @@ type ApplicationFake = {
 function createFakeApplications(workerUsers: UserType[], jobs: JobAuthorAppCountType[]) {
   let applications: ApplicationFake[] = [];
   jobs.forEach((job) => {
-    applications.push({
-      coverLetter: faker.lorem.paragraphs().slice(0, appCoverLetterMaxSize),
-      jobId: job.job.id,
-      jobAuthorId: workerUsers[Math.floor(Math.random() * workerUsers.length)].id,
-    });
+    if (job.appCount === 0) {
+      applications.push({
+        coverLetter: faker.lorem.paragraphs().slice(0, appCoverLetterMaxSize),
+        jobId: job.job.id,
+        jobAuthorId: workerUsers[Math.floor(Math.random() * workerUsers.length)].id,
+      });
+    }
   });
   return applications;
 }
@@ -47,19 +49,36 @@ function createFakeApplications(workerUsers: UserType[], jobs: JobAuthorAppCount
  *      tags:
  *        - Data management
  *      requestBody:
- *        description: The information to create new application
+ *        description: Number of fake records to be created.
  *        required: true
  *        content:
  *          application/json:
  *            schema:
- *               $ref: '#/components/schemas/CreateApplicationType'
+ *              type: object
+ *              required:
+ *                - number
+ *              properties:
+ *                number:
+ *                  type: integer
+ *                  format: int32
+ *                  minimum: 1
+ *                  maximum: 1000
+ *                  default: 10
+ *                  example: 10
  *      responses:
  *        '200':
  *          description: The operation is performed correctly
  *          content:
  *            application/json:
  *              schema:
- *                $ref: '#/components/schemas/ApplicationType'
+ *                type: object
+ *                required:
+ *                  - number
+ *                properties:
+ *                  number:
+ *                    type: integer
+ *                    format: int32
+ *                    example: 10
  *        '400':
  *          description: The parameter error
  *          content:
@@ -105,15 +124,15 @@ const callbackHandler: ApiHandlerCallback = async (
   }
   switch (req.method) {
     case 'POST': {
-      if (typeof req.body.number !== 'string') {
+      if (typeof req.body.number !== 'number') {
         throw new ParameterFormatError(
           `Parameter not correct: number ${req.body.number}`,
           formatErrorCode,
         );
       }
       const [workerUsers, jobs] = await Promise.all([
-        getUsersRole(prisma, Role.WORKER, parseInt(req.body.number)),
-        getJobs(prisma, 'true', undefined, parseInt(req.body.number)),
+        getUsersRole(prisma, Role.WORKER, req.body.number),
+        getJobs(prisma, 'true', undefined, req.body.number),
       ]);
       const applications = createFakeApplications(workerUsers, jobs);
       if (applications.length > 0) {
@@ -128,13 +147,14 @@ const callbackHandler: ApiHandlerCallback = async (
           ),
         );
       }
-      res.status(201).end();
-      return;
+      return res.status(201).json({
+        number: applications.length,
+      });
     }
   }
   throw new HttpError('Metod not implemented', metodNotImplementedErrorCode, 501);
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  return apiHandler(req, res, callbackHandler);
+  return await apiHandler(req, res, callbackHandler);
 }
