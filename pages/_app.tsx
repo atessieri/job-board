@@ -1,7 +1,11 @@
 import 'styles/globals.css';
-import type { AppProps } from 'next/app';
 import { SessionProvider, useSession } from 'next-auth/react';
 import { Spinner } from 'components/Spinner';
+import { Provider } from 'react-redux';
+import store from 'lib/client/redux/store';
+
+import type { Session } from 'next-auth';
+import type { AppProps } from 'next/app';
 
 type AuthProps = {
   children: JSX.Element;
@@ -15,14 +19,16 @@ function Auth({ children }: AuthProps) {
   return children;
 }
 
-function MyApp({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps: { session, ...pageProps } }: AppProps<{ session: Session }>) {
   return (
-    <SessionProvider session={pageProps.session}>
+    <SessionProvider session={session}>
       <Auth>
-        <Component {...pageProps} />
+        <Provider store={store}>
+          <Component {...pageProps} />
+        </Provider>
       </Auth>
     </SessionProvider>
   );
 }
 
-export default MyApp;
+export default App;

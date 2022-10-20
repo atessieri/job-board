@@ -3,7 +3,7 @@
 ```bash
 npx create-next-app@latest --typesnpm cript job-board
 npm install -D prisma tailwindcss postcss autoprefixer @faker-js/faker npm-check-updates
-npm install prisma-field-encryption next-auth pg @next-auth/prisma-adapter nodemailer sharp @headlessui/react @heroicons/react @tailwindcss/forms
+npm install prisma-field-encryption next-auth pg @next-auth/prisma-adapter nodemailer sharp @headlessui/react @heroicons/react @tailwindcss/forms react-redux @reduxjs/toolkit redux
 npx tailwindcss init -p
 npx prisma init
 ```
