@@ -6,8 +6,8 @@ export const metodNotImplementedErrorCode = 'PHE0003';
 
 export class HttpError extends CustomError {
   public httpErrorCode: number;
-  constructor(message: string, errorCode: string, httpErrorCode: number) {
-    super(message, errorCode);
+  constructor(message: string, errorCode: string, httpErrorCode: number, stack?: string) {
+    super(message, errorCode, stack);
     this.name = 'HttpError';
     this.httpErrorCode = httpErrorCode;
   }

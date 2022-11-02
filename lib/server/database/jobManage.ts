@@ -165,9 +165,17 @@ export async function getJobs(
 ) {
   if (typeof take != 'undefined') {
     if (take < minimumTakeRecordNumber) {
-      throw new ParameterFormatError(`Parameter not in range: take ${take}`, minimumValueErrorCode);
+      throw new ParameterFormatError(
+        `Parameter not in range: take ${take}`,
+        minimumValueErrorCode,
+        new Error().stack,
+      );
     } else if (take > maximumTakeRecordNumber) {
-      throw new ParameterFormatError(`Parameter not in range: take ${take}`, maximumValueErrorCode);
+      throw new ParameterFormatError(
+        `Parameter not in range: take ${take}`,
+        maximumValueErrorCode,
+        new Error().stack,
+      );
     }
   }
   let published: boolean;
@@ -179,6 +187,7 @@ export async function getJobs(
     throw new ParameterFormatError(
       `Parameter not correct: published ${onlyPublished}`,
       sizeErrorCode,
+      new Error().stack,
     );
   }
   const queryResult = await prisma.job.findMany({
@@ -304,52 +313,71 @@ export async function createJob(
     throw new ParameterFormatError(
       `Parameter not correct: title size ${title.length} too long`,
       sizeErrorCode,
+      new Error().stack,
     );
   }
   if (title.length < jobTitleMinSize) {
     throw new ParameterFormatError(
       `Parameter not correct: title size ${title.length} too short`,
       sizeErrorCode,
+      new Error().stack,
     );
   }
   if (!patternJobTitle.test(title)) {
-    throw new ParameterFormatError(`Parameter not correct: title ${title}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: title ${title}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   if (description.length > jobDescriptionMaxSize) {
     throw new ParameterFormatError(
       `Parameter not correct: description ${description.length} too long`,
       sizeErrorCode,
+      new Error().stack,
     );
   }
   if (description.length < jobDescriptionMinSize) {
     throw new ParameterFormatError(
       `Parameter not correct: description ${description.length} too short`,
       sizeErrorCode,
+      new Error().stack,
     );
   }
   if (!patternJobDescription.test(description)) {
     throw new ParameterFormatError(
       `Parameter not correct: description ${description}`,
       formatErrorCode,
+      new Error().stack,
     );
   }
   if (!patternDecimal.test(salary)) {
-    throw new ParameterFormatError(`Parameter not correct: salary ${salary}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: salary ${salary}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   if (location.length > jobLocationMaxSize) {
     throw new ParameterFormatError(
       `Parameter not correct: location size ${location.length} too long`,
       sizeErrorCode,
+      new Error().stack,
     );
   }
   if (location.length < jobLocationMinSize) {
     throw new ParameterFormatError(
       `Parameter not correct: location size ${location.length} too short`,
       sizeErrorCode,
+      new Error().stack,
     );
   }
   if (!patternJobLocation.test(location)) {
-    throw new ParameterFormatError(`Parameter not correct: location ${location}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: location ${location}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   let published: boolean;
   if (typeof onlyPublished === 'undefined' || onlyPublished == 'false') {
@@ -360,6 +388,7 @@ export async function createJob(
     throw new ParameterFormatError(
       `Parameter not correct: published ${onlyPublished}`,
       formatErrorCode,
+      new Error().stack,
     );
   }
   const queryResult = await prisma.job.create({
@@ -389,7 +418,11 @@ export async function createJob(
 
 export async function getJob(prisma: PrismaClient, jobId: number) {
   if (isNaN(jobId)) {
-    throw new ParameterFormatError(`Parameter not correct: jobId ${jobId}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: jobId ${jobId}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   const queryResult = await prisma.job.findUnique({
     where: {
@@ -469,23 +502,33 @@ export async function updateJob(
   onlyPublished?: string,
 ) {
   if (isNaN(jobId)) {
-    throw new ParameterFormatError(`Parameter not correct: jobId ${jobId}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: jobId ${jobId}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   if (typeof title === 'string') {
     if (title.length > jobTitleMaxSize) {
       throw new ParameterFormatError(
         `Parameter not correct: title size ${title.length} too long`,
         sizeErrorCode,
+        new Error().stack,
       );
     }
     if (title.length < jobTitleMinSize) {
       throw new ParameterFormatError(
         `Parameter not correct: title size ${title.length} too short`,
         sizeErrorCode,
+        new Error().stack,
       );
     }
     if (!patternJobTitle.test(title)) {
-      throw new ParameterFormatError(`Parameter not correct: title ${title}`, formatErrorCode);
+      throw new ParameterFormatError(
+        `Parameter not correct: title ${title}`,
+        formatErrorCode,
+        new Error().stack,
+      );
     }
   }
   if (typeof description === 'string') {
@@ -493,41 +536,51 @@ export async function updateJob(
       throw new ParameterFormatError(
         `Parameter not correct: description ${description.length} too long`,
         sizeErrorCode,
+        new Error().stack,
       );
     }
     if (description.length < jobDescriptionMinSize) {
       throw new ParameterFormatError(
         `Parameter not correct: description ${description.length} too short`,
         sizeErrorCode,
+        new Error().stack,
       );
     }
     if (!patternJobDescription.test(description)) {
       throw new ParameterFormatError(
         `Parameter not correct: description ${description}`,
         formatErrorCode,
+        new Error().stack,
       );
     }
   }
   if (typeof salary === 'string' && !patternDecimal.test(salary)) {
-    throw new ParameterFormatError(`Parameter not correct: salary ${salary}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: salary ${salary}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   if (typeof location === 'string') {
     if (location.length > jobLocationMaxSize) {
       throw new ParameterFormatError(
         `Parameter not correct: location size ${location.length} too long`,
         sizeErrorCode,
+        new Error().stack,
       );
     }
     if (location.length < jobLocationMinSize) {
       throw new ParameterFormatError(
         `Parameter not correct: location size ${location.length} too short`,
         sizeErrorCode,
+        new Error().stack,
       );
     }
     if (!patternJobLocation.test(location)) {
       throw new ParameterFormatError(
         `Parameter not correct: location ${location} too long`,
         formatErrorCode,
+        new Error().stack,
       );
     }
   }
@@ -539,7 +592,11 @@ export async function updateJob(
   } else if (onlyPublished === 'true') {
     published = true;
   } else {
-    throw new ParameterFormatError(`Parameter not correct: published ${published}`, sizeErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: published ${published}`,
+      sizeErrorCode,
+      new Error().stack,
+    );
   }
   const queryResult = await prisma.job.update({
     data: {
@@ -568,7 +625,11 @@ export async function updateJob(
 
 export async function deleteJob(prisma: PrismaClient, jobId: number) {
   if (isNaN(jobId)) {
-    throw new ParameterFormatError(`Parameter not correct: jobId ${jobId}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: jobId ${jobId}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   return await prisma.job.delete({
     where: {

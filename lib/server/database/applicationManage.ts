@@ -123,13 +123,25 @@ export async function getJobApplications(
 ) {
   if (typeof take != 'undefined') {
     if (take < minimumTakeRecordNumber) {
-      throw new ParameterFormatError(`Parameter not in range: take ${take}`, minimumValueErrorCode);
+      throw new ParameterFormatError(
+        `Parameter not in range: take ${take}`,
+        minimumValueErrorCode,
+        new Error().stack,
+      );
     } else if (take > maximumTakeRecordNumber) {
-      throw new ParameterFormatError(`Parameter not in range: take ${take}`, maximumValueErrorCode);
+      throw new ParameterFormatError(
+        `Parameter not in range: take ${take}`,
+        maximumValueErrorCode,
+        new Error().stack,
+      );
     }
   }
   if (isNaN(jobId)) {
-    throw new ParameterFormatError(`Parameter not correct: jobId ${jobId}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: jobId ${jobId}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   const queryResult = await prisma.application.findMany({
     include: {
@@ -190,9 +202,17 @@ export async function getAuthorApplications(
 ) {
   if (typeof take != 'undefined') {
     if (take < minimumTakeRecordNumber) {
-      throw new ParameterFormatError(`Parameter not in range: take ${take}`, minimumValueErrorCode);
+      throw new ParameterFormatError(
+        `Parameter not in range: take ${take}`,
+        minimumValueErrorCode,
+        new Error().stack,
+      );
     } else if (take > maximumTakeRecordNumber) {
-      throw new ParameterFormatError(`Parameter not in range: take ${take}`, maximumValueErrorCode);
+      throw new ParameterFormatError(
+        `Parameter not in range: take ${take}`,
+        maximumValueErrorCode,
+        new Error().stack,
+      );
     }
   }
   const queryResult = await prisma.application.findMany({
@@ -282,22 +302,29 @@ export async function createApplication(
     throw new ParameterFormatError(
       `Parameter not correct: coverLetter size ${coverLetter.length} too long`,
       sizeErrorCode,
+      new Error().stack,
     );
   }
   if (coverLetter.length < appCoverLetterMinSize) {
     throw new ParameterFormatError(
       `Parameter not correct: coverLetter size ${coverLetter.length} too short`,
       sizeErrorCode,
+      new Error().stack,
     );
   }
   if (!patternAppCoverLetter.test(coverLetter)) {
     throw new ParameterFormatError(
       `Parameter not correct: coverLetter ${coverLetter}`,
       formatErrorCode,
+      new Error().stack,
     );
   }
   if (isNaN(jobId)) {
-    throw new ParameterFormatError(`Parameter not correct: jobId ${jobId}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: jobId ${jobId}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   const queryResult = await prisma.application.create({
     data: {
@@ -325,6 +352,7 @@ export async function getApplication(prisma: PrismaClient, applicationId: number
     throw new ParameterFormatError(
       `Parameter not correct: applicationId ${applicationId}`,
       formatErrorCode,
+      new Error().stack,
     );
   }
   const queryResult = await prisma.application.findUnique({
@@ -370,6 +398,7 @@ export async function updateApplication(
     throw new ParameterFormatError(
       `Parameter not correct: jobId ${applicationId}`,
       formatErrorCode,
+      new Error().stack,
     );
   }
   if (typeof coverLetter === 'string') {
@@ -377,18 +406,21 @@ export async function updateApplication(
       throw new ParameterFormatError(
         `Parameter not correct: coverLetter size ${coverLetter.length} too long`,
         sizeErrorCode,
+        new Error().stack,
       );
     }
     if (coverLetter.length < appCoverLetterMinSize) {
       throw new ParameterFormatError(
         `Parameter not correct: coverLetter size ${coverLetter.length} too short`,
         sizeErrorCode,
+        new Error().stack,
       );
     }
     if (!patternAppCoverLetter.test(coverLetter)) {
       throw new ParameterFormatError(
         `Parameter not correct: coverLetter ${coverLetter}`,
         formatErrorCode,
+        new Error().stack,
       );
     }
   }
@@ -415,6 +447,7 @@ export async function deleteApplication(prisma: PrismaClient, applicationId: num
     throw new ParameterFormatError(
       `Parameter not correct: jobId ${applicationId}`,
       formatErrorCode,
+      new Error().stack,
     );
   }
   return await prisma.job.delete({

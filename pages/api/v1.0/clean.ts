@@ -57,11 +57,11 @@ const callbackHandler: ApiHandlerCallback = async (
   session: Session | null,
 ) => {
   if (!session) {
-    throw new HttpError('Not logged in', noLoggedInErrorCode, 401);
+    throw new HttpError('Not logged in', noLoggedInErrorCode, 401, new Error().stack);
   }
   const user = await getUser(prisma, session.user.id);
   if (typeof user === 'undefined' || user.role !== Role.ADMIN) {
-    throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
+    throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405, new Error().stack);
   }
   switch (req.method) {
     case 'DELETE': {
@@ -70,7 +70,12 @@ const callbackHandler: ApiHandlerCallback = async (
       return;
     }
   }
-  throw new HttpError('Metod not implemented', metodNotImplementedErrorCode, 501);
+  throw new HttpError(
+    'Metod not implemented',
+    metodNotImplementedErrorCode,
+    501,
+    new Error().stack,
+  );
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

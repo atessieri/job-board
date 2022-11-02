@@ -81,7 +81,12 @@ const callbackHandler: ApiHandlerCallback = async (
       return res.status(200).json(jobs);
     }
   }
-  throw new HttpError('Metod not implemented', metodNotImplementedErrorCode, 501);
+  throw new HttpError(
+    'Metod not implemented',
+    metodNotImplementedErrorCode,
+    501,
+    new Error().stack,
+  );
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

@@ -192,40 +192,59 @@ const callbackHandler: ApiHandlerCallback = async (
   session: Session | null,
 ) => {
   if (typeof req.query.id !== 'string') {
-    throw new ParameterFormatError(`Parameter not correct: id ${req.query.id}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: id ${req.query.id}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   if (!session) {
-    throw new HttpError('Not logged in', noLoggedInErrorCode, 401);
+    throw new HttpError('Not logged in', noLoggedInErrorCode, 401, new Error().stack);
   }
   const [user, application] = await Promise.all([
     getUser(prisma, session.user.id),
     getApplication(prisma, parseInt(req.query.id)),
   ]);
   if (typeof user === 'undefined' || typeof application === 'undefined') {
-    throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
+    throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405, new Error().stack);
   }
   switch (req.method) {
     case 'GET': {
       switch (user.role) {
         case Role.WORKER:
           if (session.user.id !== application.authorId) {
-            throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
+            throw new HttpError(
+              'Metod not allowed',
+              metodNotAllowedErrorCode,
+              405,
+              new Error().stack,
+            );
           }
           break;
         case Role.COMPANY:
           const job = await getJob(prisma, application.jobId);
           if (typeof application === 'undefined' || session.user.id !== job?.job.authorId) {
-            throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
+            throw new HttpError(
+              'Metod not allowed',
+              metodNotAllowedErrorCode,
+              405,
+              new Error().stack,
+            );
           }
           break;
         default:
-          throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
+          throw new HttpError(
+            'Metod not allowed',
+            metodNotAllowedErrorCode,
+            405,
+            new Error().stack,
+          );
       }
       return res.status(200).json(application);
     }
     case 'PUT': {
       if (user.role !== Role.WORKER || session.user.id !== application.authorId) {
-        throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
+        throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405, new Error().stack);
       }
       const applicationUpdated = await updateApplication(
         prisma,
@@ -236,14 +255,19 @@ const callbackHandler: ApiHandlerCallback = async (
     }
     case 'DELETE': {
       if (user.role !== Role.WORKER || session.user.id !== application.authorId) {
-        throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
+        throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405, new Error().stack);
       }
       await deleteApplication(prisma, parseInt(req.query.id));
       res.status(200).end();
       return;
     }
   }
-  throw new HttpError('Metod not implemented', metodNotImplementedErrorCode, 501);
+  throw new HttpError(
+    'Metod not implemented',
+    metodNotImplementedErrorCode,
+    501,
+    new Error().stack,
+  );
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

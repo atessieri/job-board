@@ -33,17 +33,23 @@ function createFakeUsers(userNumber: number) {
   const roleType = [Role.ADMIN, Role.COMPANY, Role.WORKER];
   let users: UserFake[] = [];
   if (isNaN(userNumber)) {
-    throw new ParameterFormatError(`Parameter not correct: number ${userNumber}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: number ${userNumber}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   if (userNumber < minimumFakeRecordNumber) {
     throw new ParameterFormatError(
       `Parameter not in range: userNumber ${userNumber}`,
       minimumValueErrorCode,
+      new Error().stack,
     );
   } else if (userNumber > maximumFakeRecordNumber) {
     throw new ParameterFormatError(
       `Parameter not in range: userNumber ${userNumber}`,
       maximumValueErrorCode,
+      new Error().stack,
     );
   }
   for (let count = 0; count < userNumber; count++) {
@@ -135,11 +141,11 @@ const callbackHandler: ApiHandlerCallback = async (
   session: Session | null,
 ) => {
   if (!session) {
-    throw new HttpError('Not logged in', noLoggedInErrorCode, 401);
+    throw new HttpError('Not logged in', noLoggedInErrorCode, 401, new Error().stack);
   }
   const user = await getUser(prisma, session.user.id);
   if (typeof user === 'undefined' || user.role !== Role.ADMIN) {
-    throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
+    throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405, new Error().stack);
   }
   switch (req.method) {
     case 'POST': {
@@ -147,6 +153,7 @@ const callbackHandler: ApiHandlerCallback = async (
         throw new ParameterFormatError(
           `Parameter not correct: number ${req.body.number}`,
           formatErrorCode,
+          new Error().stack,
         );
       }
       const users = createFakeUsers(req.body.number);
@@ -162,7 +169,12 @@ const callbackHandler: ApiHandlerCallback = async (
       });
     }
   }
-  throw new HttpError('Metod not implemented', metodNotImplementedErrorCode, 501);
+  throw new HttpError(
+    'Metod not implemented',
+    metodNotImplementedErrorCode,
+    501,
+    new Error().stack,
+  );
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

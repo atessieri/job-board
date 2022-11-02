@@ -100,10 +100,14 @@ const callbackHandler: ApiHandlerCallback = async (
   session: Session | null,
 ) => {
   if (typeof req.query.id !== 'string') {
-    throw new ParameterFormatError(`Parameter not correct: id ${req.query.id}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: id ${req.query.id}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   if (!session) {
-    throw new HttpError('Not logged in', noLoggedInErrorCode, 401);
+    throw new HttpError('Not logged in', noLoggedInErrorCode, 401, new Error().stack);
   }
   const [user, job] = await Promise.all([
     getUser(prisma, session.user.id),
@@ -115,7 +119,7 @@ const callbackHandler: ApiHandlerCallback = async (
     typeof job === 'undefined' ||
     session.user.id !== job.job.authorId
   ) {
-    throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
+    throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405, new Error().stack);
   }
   switch (req.method) {
     case 'GET': {
@@ -128,7 +132,12 @@ const callbackHandler: ApiHandlerCallback = async (
       return res.status(200).json(applications);
     }
   }
-  throw new HttpError('Metod not implemented', metodNotImplementedErrorCode, 501);
+  throw new HttpError(
+    'Metod not implemented',
+    metodNotImplementedErrorCode,
+    501,
+    new Error().stack,
+  );
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

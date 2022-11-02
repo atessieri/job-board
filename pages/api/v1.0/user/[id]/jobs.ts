@@ -85,7 +85,11 @@ const callbackHandler: ApiHandlerCallback = async (
   session: Session | null,
 ) => {
   if (typeof req.query.id !== 'string') {
-    throw new ParameterFormatError(`Parameter not correct: id ${req.query.id}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: id ${req.query.id}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   let onlyPublished: string | undefined;
   if (!session) {
@@ -107,6 +111,7 @@ const callbackHandler: ApiHandlerCallback = async (
       throw new ParameterFormatError(
         `Parameter not correct: onlyPublished ${req.query.onlyPublished}`,
         formatErrorCode,
+        new Error().stack,
       );
     }
   }
@@ -122,7 +127,12 @@ const callbackHandler: ApiHandlerCallback = async (
       return res.status(200).json(jobs);
     }
   }
-  throw new HttpError('Metod not implemented', metodNotImplementedErrorCode, 501);
+  throw new HttpError(
+    'Metod not implemented',
+    metodNotImplementedErrorCode,
+    501,
+    new Error().stack,
+  );
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

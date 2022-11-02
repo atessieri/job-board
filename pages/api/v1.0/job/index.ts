@@ -75,36 +75,47 @@ const callbackHandler: ApiHandlerCallback = async (
   session: Session | null,
 ) => {
   if (!session) {
-    throw new HttpError('Not logged in', noLoggedInErrorCode, 401);
+    throw new HttpError('Not logged in', noLoggedInErrorCode, 401, new Error().stack);
   }
   const user = await getUser(prisma, session.user.id);
   if (typeof user === 'undefined' || user.role !== Role.COMPANY) {
-    throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405);
+    throw new HttpError('Metod not allowed', metodNotAllowedErrorCode, 405, new Error().stack);
   }
   switch (req.method) {
     case 'POST': {
       if (typeof req.body.title !== 'string') {
-        throw new ParameterFormatError(`Parameter not correct: title undefined`, formatErrorCode);
+        throw new ParameterFormatError(
+          `Parameter not correct: title undefined`,
+          formatErrorCode,
+          new Error().stack,
+        );
       }
       if (typeof req.body.description !== 'string') {
         throw new ParameterFormatError(
           `Parameter not correct: description undefined`,
           formatErrorCode,
+          new Error().stack,
         );
       }
       if (typeof req.body.salary !== 'string') {
-        throw new ParameterFormatError(`Parameter not correct: salary undefined`, formatErrorCode);
+        throw new ParameterFormatError(
+          `Parameter not correct: salary undefined`,
+          formatErrorCode,
+          new Error().stack,
+        );
       }
       if (typeof req.body.location !== 'string') {
         throw new ParameterFormatError(
           `Parameter not correct: location undefined`,
           formatErrorCode,
+          new Error().stack,
         );
       }
       if (typeof req.body.published !== 'undefined' && typeof req.body.published !== 'string') {
         throw new ParameterFormatError(
           `Parameter not correct: published undefined`,
           formatErrorCode,
+          new Error().stack,
         );
       }
       const job = await createJob(
@@ -119,7 +130,12 @@ const callbackHandler: ApiHandlerCallback = async (
       return res.status(201).json(job);
     }
   }
-  throw new HttpError('Metod not implemented', metodNotImplementedErrorCode, 501);
+  throw new HttpError(
+    'Metod not implemented',
+    metodNotImplementedErrorCode,
+    501,
+    new Error().stack,
+  );
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

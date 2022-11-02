@@ -138,18 +138,31 @@ export async function createUser(
   role?: Role,
 ) {
   if (typeof name === 'string' && !patternNameSurname.test(name)) {
-    throw new ParameterFormatError(`Parameter not correct: name ${name}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: name ${name}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   if (!patternEmail.test(email)) {
-    throw new ParameterFormatError(`Parameter not correct: email ${email}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: email ${email}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   if (typeof username === 'string' && !patternUsername.test(username)) {
-    throw new ParameterFormatError(`Parameter not correct: username ${username}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: username ${username}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   if (typeof imagePath === 'string' && !patternUrl.test(imagePath)) {
     throw new ParameterFormatError(
       `Parameter not correct: imagePath ${imagePath}`,
       formatErrorCode,
+      new Error().stack,
     );
   }
   const queryResult = await prisma.user.create({
@@ -242,15 +255,24 @@ export async function updateUser(
   role?: Role,
 ) {
   if (typeof name === 'string' && !patternNameSurname.test(name)) {
-    throw new ParameterFormatError(`Parameter not correct: name ${name}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: name ${name}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   if (typeof username === 'string' && !patternUsername.test(username)) {
-    throw new ParameterFormatError(`Parameter not correct: username ${username}`, formatErrorCode);
+    throw new ParameterFormatError(
+      `Parameter not correct: username ${username}`,
+      formatErrorCode,
+      new Error().stack,
+    );
   }
   if (typeof imagePath === 'string' && !patternUrl.test(imagePath)) {
     throw new ParameterFormatError(
       `Parameter not correct: imagePath ${imagePath}`,
       formatErrorCode,
+      new Error().stack,
     );
   }
   const queryResult = await prisma.user.update({
@@ -279,9 +301,17 @@ export async function updateUser(
 export async function getUsers(prisma: PrismaClient, take?: number, cursor?: string) {
   if (typeof take != 'undefined') {
     if (take < minimumTakeRecordNumber) {
-      throw new ParameterFormatError(`Parameter not in range: take ${take}`, minimumValueErrorCode);
+      throw new ParameterFormatError(
+        `Parameter not in range: take ${take}`,
+        minimumValueErrorCode,
+        new Error().stack,
+      );
     } else if (take > maximumTakeRecordNumber) {
-      throw new ParameterFormatError(`Parameter not in range: take ${take}`, maximumValueErrorCode);
+      throw new ParameterFormatError(
+        `Parameter not in range: take ${take}`,
+        maximumValueErrorCode,
+        new Error().stack,
+      );
     }
   }
   const queryResult = await prisma.user.findMany({
@@ -324,9 +354,17 @@ export async function getUsersRole(
 ) {
   if (typeof take != 'undefined') {
     if (take < minimumTakeRecordNumber) {
-      throw new ParameterFormatError(`Parameter not in range: take ${take}`, minimumValueErrorCode);
+      throw new ParameterFormatError(
+        `Parameter not in range: take ${take}`,
+        minimumValueErrorCode,
+        new Error().stack,
+      );
     } else if (take > maximumTakeRecordNumber) {
-      throw new ParameterFormatError(`Parameter not in range: take ${take}`, maximumValueErrorCode);
+      throw new ParameterFormatError(
+        `Parameter not in range: take ${take}`,
+        maximumValueErrorCode,
+        new Error().stack,
+      );
     }
   }
   const queryResult = await prisma.user.findMany({

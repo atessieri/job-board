@@ -6,8 +6,8 @@ export const minimumValueErrorCode = 'PFE0003';
 export const maximumValueErrorCode = 'PFE0004';
 
 export class ParameterFormatError extends CustomError {
-  constructor(message: string, errorCode: string) {
-    super(message, errorCode);
+  constructor(message: string, errorCode: string, stack?: string) {
+    super(message, errorCode, stack);
     this.name = 'ParameterFormatError';
   }
 }

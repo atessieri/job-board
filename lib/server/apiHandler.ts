@@ -71,6 +71,7 @@ export default async function apiHandler(
   } catch (error) {
     if (error instanceof HttpError) {
       console.log(`Error ${error.name} code ${error.errorCode}: ${error.message}`);
+      console.log(`Stack ${error.stack}`);
       return res.status(error.httpErrorCode).json({
         message: error.message,
         name: error.name,
@@ -78,6 +79,7 @@ export default async function apiHandler(
       } as ApiErrorReply);
     } else if (error instanceof ParameterFormatError) {
       console.log(`Error ${error.name} code ${error.errorCode}: ${error.message}`);
+      console.log(`Stack ${error.stack}`);
       return res.status(400).json({
         message: error.message,
         name: error.name,
@@ -85,6 +87,7 @@ export default async function apiHandler(
       } as ApiErrorReply);
     } else if (error instanceof CustomError) {
       console.log(`Error ${error.name} code ${error.errorCode}: ${error.message}`);
+      console.log(`Stack ${error.stack}`);
       return res.status(500).json({
         message: error.message,
         name: error.name,
