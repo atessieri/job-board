@@ -1,13 +1,13 @@
-import NavBar from 'components/NavBar';
-import ProfileDialog from 'components/ProfileDialog';
-import { signOut } from 'next-auth/react';
+import NavBar from 'components/NavBar/NavBar';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
-import type { NavigationConfig, UserNavigationConfig } from 'components/NavBar';
-import type { User } from 'lib/database/UserManage';
+import { useMemo } from 'react';
+import { useGetUserQuery } from 'lib/client/redux/userSlice';
+
+import type { NextRouter } from 'next/router';
+import type { NavigationConfig, UserNavigationConfig } from 'components/NavBar/NavBar';
+import type { UserType } from 'lib/server/database/userManage';
 
 type PageLayoutProps = {
-  user?: User;
   children?: JSX.Element;
 };
 
@@ -28,29 +28,26 @@ const workerNav: NavigationConfig[] = [
 
 const guestNav: NavigationConfig[] = [{ name: 'Jobs', href: '/', current: false }];
 
-const logo: string = '/logo.png';
+const userNavigation: UserNavigationConfig[] = [
+  { name: 'Profile', href: '/profile' },
+  { name: 'Logout', href: '/api/auth/signout' },
+];
 
-export default function PageLayout({ user, children }: PageLayoutProps) {
-  const router = useRouter();
-  let [isOpen, setIsOpen] = useState(false);
-  let navigation;
-  if (!user) {
-    navigation = guestNav;
-  } else {
-    switch (user.role) {
-      case 'ADMIN':
-        navigation = adminNav;
-        break;
-      case 'COMPANY':
-        navigation = companyNav;
-        break;
-      case 'WORKER':
-        navigation = workerNav;
-        break;
-      default:
-        navigation = guestNav;
-        break;
-    }
+function selectNavigation(router: NextRouter, userAvailable: boolean, user?: UserType) {
+  let navigation: NavigationConfig[];
+  switch (user?.role) {
+    case 'ADMIN':
+      navigation = adminNav;
+      break;
+    case 'COMPANY':
+      navigation = companyNav;
+      break;
+    case 'WORKER':
+      navigation = workerNav;
+      break;
+    default:
+      navigation = guestNav;
+      break;
   }
   navigation.map((item) => {
     if (item.href === router.pathname) {
@@ -59,14 +56,20 @@ export default function PageLayout({ user, children }: PageLayoutProps) {
       item.current = false;
     }
   });
-  const userNavigation: UserNavigationConfig[] = [
-    { name: 'Profile', action: () => setIsOpen(true) },
-    { name: 'Logout', action: async () => await signOut() },
-  ];
+  return navigation;
+}
+
+export default function PageLayout({ children }: PageLayoutProps) {
+  const router = useRouter();
+  const { currentData: user, isLoading, isError } = useGetUserQuery();
+  const userAvailable = isLoading === false && isError === false && typeof user !== 'undefined';
+  const navigation = useMemo(
+    () => selectNavigation(router, userAvailable, user),
+    [router, userAvailable, user],
+  );
   return (
     <div className='max-w-7xl mx-auto'>
-      <NavBar logo={logo} navigation={navigation} userNavigation={userNavigation} user={user} />
-      <ProfileDialog user={user} isOpen={isOpen} onExit={() => setIsOpen(false)} />
+      <NavBar navigation={navigation} userNavigation={userNavigation} />
       {children}
     </div>
   );

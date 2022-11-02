@@ -1,4 +1,4 @@
-import { classNames } from 'lib/utilities';
+import classnames from 'classnames';
 
 type GrayManProps = {
   className: string;
@@ -8,7 +8,7 @@ export default function GrayMan({ className }: GrayManProps) {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
-      className={classNames(className, 'text-gray-500')}
+      className={classnames(className, 'text-gray-500')}
       fill='currentColor'
       viewBox='0 0 24 24'
     >
